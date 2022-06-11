@@ -10,56 +10,81 @@ N = 15;
 d = 0.3/(N-1); % distance between array points
 [pLF,aLF] = readToFF(folder,N);
 
-slope = -4.73;
-newLF = ATshiftLF(pLF, slope);
 
 
 l = 114;
 % k = 159;
 k = 162;
 
+% l = 85;
+% k = 155;
 
-t = 8;
-figure
-subaxis(2,1,1)
-imagesc(squeeze(pLF(t,:,l,:)));
-title('original epi')
-
-subaxis(2,1,2)
-imagesc(squeeze(newLF(t,:,l,:)));
-title('shifted epi')
-
-
-phaseSurface = squeeze(newLF(:,:,l,k));
 
 c = 3e8;
 f_m = 50e6;
-distSurf = phaseSurface*c/(4*pi*f_m);
+
+tmp = load('cameraParams.mat');
+K = tmp.cameraParams.IntrinsicMatrix';
+
+PzVals = linspace(0.8,1.2,20);
+% PzVals = linspace(1,1.8,35);
+
+% [ii,jj] = meshgrid(1:N);
+fitters = {@(distSurf,regionCut,pz) runCurveFit(distSurf, regionCut,d),...
+              @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, regionCut,d,pz),...
+              @(distSurf,regionCut,pz) runCurveFit(distSurf, true(N,N),d),...
+              @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, true(N,N),d,pz)};
+
+fitLeg  =["Curve fit (regionCut)", "Curve fit with Pz Fixed (regionCut)", ...
+    "Curve fit (full)", "Curve fit with Pz Fixed (full)"];
+
+errors = zeros(length(fitters),length(PzVals));
+regionSize = zeros(length(fitters),length(PzVals));
+
+
+waitTotal = length(fitters)*length(PzVals);
+waitCount = 0;
+
+for fitIdx = 1:length(fitters)
+    for depthIdx = 1:length(PzVals)
+        waitbar(waitCount/waitTotal)
+    
+        slope = -K(1,1)*d/PzVals(depthIdx);
+        newLF = ATshiftLF(pLF, slope);
+        phaseSurface = squeeze(newLF(:,:,l,k));
+        distSurf = phaseSurface*c/(4*pi*f_m);
+
+        phaseRegions = bwlabel(~edge(distSurf),4);
+        regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
+    
+        [fitted_curve, rmse, error] = fitters{fitIdx}(distSurf, regionCut,PzVals(depthIdx));
+    
+        regionSize(fitIdx,depthIdx) = sum(regionCut,'all');
+    
+        errors(fitIdx,depthIdx) = rmse;
+
+        waitCount = waitCount + 1;
+    end
+end
+
+figure
+subaxis(2,1,1)
+ATplot(PzVals, errors')
+set(gca,'YScale','log')
+ylabel('RMSE [m]')
+subaxis(2,1,2)
+ATplot(PzVals, regionSize')
+ylabel('Number of points used')
+xlabel('P_z [m]')
+legend(fitLeg)
+
+
+
 
 
 figure
-% surf(newLF(:,:,l,k));
-[ii,jj] = meshgrid(1:N);
-plot3(ii,jj,distSurf,'rx', 'LineWidth',2)
-xlabel('i')
-ylabel('j')
-
-% need to juggle wanting to use as much data as possible vs lowering error
-regionCut = jj<10;
-[fitted_curve, rmse] = runCurveFit(distSurf, regionCut,d)
-
-
-
-[xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
+imagesc(squeeze(pLF((N+1)/2,(N+1)/2,:,:))*c/(4*pi*f_m))
+colorbar
 hold on
-surf(xx,yy,fitted_curve(xx,yy))
-alpha(0.6);
-
-figure
-hold on
-surf(xx,yy,fitted_curve(xx,yy))
-alpha(0.6);
-% plot3(ii(subset),jj(subset),distSurf(subset),'rx', 'LineWidth',2)
-xlabel('i')
-ylabel('j')
+ATplot(k,l,'rx')
 
