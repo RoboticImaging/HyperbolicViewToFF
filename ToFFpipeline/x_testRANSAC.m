@@ -44,18 +44,11 @@ plot3(ii,jj,distSurf,'rx', 'LineWidth',2)
 xlabel('i')
 ylabel('j')
 
-notSaturated = distSurf > 0.02;
+% need to juggle wanting to use as much data as possible vs lowering error
+regionCut = jj<10;
+[fitted_curve, rmse] = runCurveFit(distSurf, regionCut,d)
 
-regionCut = jj < 9;
-% regionCut = true(N,N);
 
-subset = and(notSaturated, regionCut);
-subset = subset(:);
-
-fitfun = fittype( @(px,py,pz,s,t) sqrt(pz.^2 + (t*d-px).^2 + (s*d-py).^2), 'independent',{'s','t'});
-[fitted_curve,~] = fit([ii(subset),jj(subset)],distSurf(subset),fitfun,'StartPoint',[1 1 1]);
-
-coeffvals = coeffvalues(fitted_curve);
 
 [xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
 hold on
@@ -66,7 +59,7 @@ figure
 hold on
 surf(xx,yy,fitted_curve(xx,yy))
 alpha(0.6);
-plot3(ii(subset),jj(subset),distSurf(subset),'rx', 'LineWidth',2)
+% plot3(ii(subset),jj(subset),distSurf(subset),'rx', 'LineWidth',2)
 xlabel('i')
 ylabel('j')
 
