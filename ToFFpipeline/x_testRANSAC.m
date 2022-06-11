@@ -12,12 +12,12 @@ d = 0.3/(N-1); % distance between array points
 
 
 
-l = 114;
-% k = 159;
-k = 162;
+% l = 114;
+% % k = 159;
+% k = 162;
 
-% l = 85;
-% k = 155;
+l = 60;
+k = 87;
 
 
 c = 3e8;
@@ -26,10 +26,12 @@ f_m = 50e6;
 tmp = load('cameraParams.mat');
 K = tmp.cameraParams.IntrinsicMatrix';
 
-PzVals = linspace(0.8,1.2,20);
-% PzVals = linspace(1,1.8,35);
+% PzVals = linspace(0.8,1.2,20);
+PzVals = linspace(1,1.8,35);
 
 % [ii,jj] = meshgrid(1:N);
+% TODO: also check case where Pz fixes every point ie no fit needed? just
+% uses matrix to find Px Py Pz
 fitters = {@(distSurf,regionCut,pz) runCurveFit(distSurf, regionCut,d),...
               @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, regionCut,d,pz),...
               @(distSurf,regionCut,pz) runCurveFit(distSurf, true(N,N),d),...
@@ -54,10 +56,12 @@ for fitIdx = 1:length(fitters)
         phaseSurface = squeeze(newLF(:,:,l,k));
         distSurf = phaseSurface*c/(4*pi*f_m);
 
-        phaseRegions = bwlabel(~edge(distSurf),4);
+%         phaseRegions = bwlabel(~edge(distSurf),4);
+        phaseRegions = kmeans(distSurf(:),2);
+        phaseRegions = reshape(phaseRegions,[N,N]);
         regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
     
-        [fitted_curve, rmse, error] = fitters{fitIdx}(distSurf, regionCut,PzVals(depthIdx));
+        [fitted_curve, rmse, error, regionCut] = fitters{fitIdx}(distSurf, regionCut,PzVals(depthIdx));
     
         regionSize(fitIdx,depthIdx) = sum(regionCut,'all');
     

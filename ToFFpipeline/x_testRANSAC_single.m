@@ -10,14 +10,18 @@ N = 15;
 d = 0.3/(N-1); % distance between array points
 [pLF,aLF] = readToFF(folder,N);
 
-% slope = -5.2;
-slope = -4.73;
-
-
 tmp = load('cameraParams.mat');
 K = tmp.cameraParams.IntrinsicMatrix';
 
-Pz = -K(1,1)*d/slope
+% choose a slope and find corresponding Pz
+% slope = -5.2;
+% slope = -4.73;
+% slope = -4.82;
+% Pz = -K(1,1)*d/slope
+
+% or choose pz to give slope:
+Pz = 0.88;
+slope = -K(1,1)*d/Pz;
 
 newLF = ATshiftLF(pLF, slope);
 
@@ -65,16 +69,20 @@ surf(xx,yy,fitted_curve(xx,yy))
 alpha(0.6);
 
 % extract an edge and divide into regions
-phaseRegions = bwlabel(~edge(distSurf),4);
+% phaseRegions = bwlabel(~edge(distSurf),4);
+phaseRegions = kmeans(distSurf(:),2);
+phaseRegions = reshape(phaseRegions,[N,N]);
 figure
 imagesc(phaseRegions)
 
 regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
+figure
+imagesc(regionCut)
 
 % [fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d)
 [fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
 
-
+figure
 [xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
 plot3(ii,jj,distSurf,'rx', 'LineWidth',2)
 hold on

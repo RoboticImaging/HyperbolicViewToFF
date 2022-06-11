@@ -1,4 +1,4 @@
-function [fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d)
+function [fitted_curve, rmse, error, regionCut] = runCurveFit(distSurf, regionCut,d)
     notSaturated = distSurf > 0.02;
     N = size(distSurf,1);
     [ii,jj] = meshgrid(1:N);
