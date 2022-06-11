@@ -31,8 +31,6 @@ PzVals = linspace(0.86,1.1,40);
 % PzVals = linspace(1,1.8,35);
 
 % [ii,jj] = meshgrid(1:N);
-% TODO: also check case where Pz fixes every point ie no fit needed? just
-% uses matrix to find Px Py Pz
 % fitters = {@(distSurf,regionCut,pz) runCurveFit(distSurf, regionCut,d),...
 %               @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, regionCut,d,pz),...
 %               @(distSurf,regionCut,pz) runCurveFit(distSurf, true(N,N),d),...
@@ -64,7 +62,8 @@ for fitIdx = 1:length(fitters)
         phaseSurface = squeeze(newLF(:,:,l,k));
         distSurf = phaseSurface*c/(4*pi*f_m);
 
-        phaseRegions = bwlabel(~edge(distSurf),4);
+        phaseRegions = true(N,N);
+%         phaseRegions = bwlabel(~edge(distSurf),4);
 %         phaseRegions = kmeans(distSurf(:),2);
 %         phaseRegions = reshape(phaseRegions,[N,N]);
         regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);

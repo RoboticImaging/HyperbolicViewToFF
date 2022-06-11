@@ -14,8 +14,8 @@ tmp = load('cameraParams.mat');
 K = tmp.cameraParams.IntrinsicMatrix';
 
 % choose a slope and find corresponding Pz
-% slope = -5.2;
-slope = -4.73;
+slope = -5.2;
+% slope = -4.73;
 % slope = -4.82;
 Pz = -K(1,1)*d/slope
 

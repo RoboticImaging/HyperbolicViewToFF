@@ -28,5 +28,8 @@ function [phaseLF,ampLF] = readToFF(pathToMat,N)
             [phaseLF(l,k,:,:),~] = undistortImage(temp.phi,cameraParams);
         end
     end
+
+    phaseLF = flip(phaseLF,1);
+    ampLF = flip(ampLF,1);
 end
 
