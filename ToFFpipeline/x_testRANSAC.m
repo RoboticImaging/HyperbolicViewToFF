@@ -12,12 +12,15 @@ d = 0.3/(N-1); % distance between array points
 
 
 
-l = 114;
-% k = 159;
 k = 162;
+l = 114;
 
 % l = 60;
 % k = 87;
+
+% k = 145;
+% l = 106;
+
 
 
 c = 3e8;
@@ -28,6 +31,7 @@ K = tmp.cameraParams.IntrinsicMatrix';
 
 % PzVals = linspace(0.8,1.2,20);
 PzVals = linspace(0.86,1.1,40);
+% PzVals = linspace(1.35,1.6,20);
 % PzVals = linspace(1,1.8,35);
 
 % [ii,jj] = meshgrid(1:N);
@@ -67,9 +71,17 @@ for fitIdx = 1:length(fitters)
 %         phaseRegions = kmeans(distSurf(:),2);
 %         phaseRegions = reshape(phaseRegions,[N,N]);
         regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
-    
+
+
+        regionCut = true(N,N);
         [fitted_curve, rmse, error, regionCut] = fitters{fitIdx}(distSurf, regionCut,PzVals(depthIdx));
-    
+        tol = 0.03; % 3cm
+        [xx,yy] = meshgrid(linspace(1,N,20));
+        regionCut  = and(min(fitted_curve(xx,yy),[],'all') - tol < distSurf, distSurf < tol + max(fitted_curve(xx,yy),[],'all'));
+        if (sum(regionCut,'all') >= 2) && regionCut((N+1)/2,(N+1)/2) == 1
+            [fitted_curve, rmse, error, regionCut] = fitters{fitIdx}(distSurf, regionCut,PzVals(depthIdx));
+        end
+
         regionSize(fitIdx,depthIdx) = sum(regionCut,'all');
     
         errors(fitIdx,depthIdx) = rmse;
