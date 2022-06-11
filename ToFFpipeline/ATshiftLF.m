@@ -20,7 +20,7 @@ function newLF = ATshiftLF(LF, slope)
 		    
 		    CurSlice = Interpolant( {v+VOffset, u+UOffset} );
 		    
-		    newLF(TIdx,SIdx, :,:, :) = CurSlice;
+		    newLF(TIdx,SIdx, :,:) = CurSlice;
         end
     end
 end

@@ -3,13 +3,70 @@ clc;
 close all;
 
 % set up memory
-folder = fullfile("G:\ACFR Winter storage\TOFF\matFiles\boxBlocksWithCoke");
+% folder = fullfile("G:\ACFR Winter storage\TOFF\matFiles\boxBlocksWithCoke");
+folder = fullfile("G:\ACFR Winter storage\Winter Project\git\ToF\Winter2020\ToFFexperiments\Results\ToFF\matFiles\blockWithGroundTruth");
 
-[pLF,aLF] = readToFF(folder,15);
+N = 15;
+d = 0.3/(N-1); % distance between array points
+[pLF,aLF] = readToFF(folder,N);
+
+slope = -4.73;
+newLF = ATshiftLF(pLF, slope);
 
 
+l = 114;
+% k = 159;
+k = 162;
 
 
+t = 8;
+figure
+subaxis(2,1,1)
+imagesc(squeeze(pLF(t,:,l,:)));
+title('original epi')
+
+subaxis(2,1,2)
+imagesc(squeeze(newLF(t,:,l,:)));
+title('shifted epi')
 
 
+phaseSurface = squeeze(newLF(:,:,l,k));
+
+c = 3e8;
+f_m = 50e6;
+distSurf = phaseSurface*c/(4*pi*f_m);
+
+
+figure
+% surf(newLF(:,:,l,k));
+[ii,jj] = meshgrid(1:N);
+plot3(ii,jj,distSurf,'rx', 'LineWidth',2)
+xlabel('i')
+ylabel('j')
+
+notSaturated = distSurf > 0.02;
+
+regionCut = jj < 9;
+% regionCut = true(N,N);
+
+subset = and(notSaturated, regionCut);
+subset = subset(:);
+
+fitfun = fittype( @(px,py,pz,s,t) sqrt(pz.^2 + (t*d-px).^2 + (s*d-py).^2), 'independent',{'s','t'});
+[fitted_curve,~] = fit([ii(subset),jj(subset)],distSurf(subset),fitfun,'StartPoint',[1 1 1]);
+
+coeffvals = coeffvalues(fitted_curve);
+
+[xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
+hold on
+surf(xx,yy,fitted_curve(xx,yy))
+alpha(0.6);
+
+figure
+hold on
+surf(xx,yy,fitted_curve(xx,yy))
+alpha(0.6);
+plot3(ii(subset),jj(subset),distSurf(subset),'rx', 'LineWidth',2)
+xlabel('i')
+ylabel('j')
 

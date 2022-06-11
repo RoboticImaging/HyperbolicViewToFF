@@ -6,17 +6,17 @@ close all;
 % folder = fullfile("G:\ACFR Winter storage\TOFF\matFiles\blocksAndScreen");
 folder = fullfile("G:\ACFR Winter storage\TOFF\matFiles\blocksWithoutScreen");
 
-
+slope = -2;
 
 [pLF,aLF] = readToFF(folder,15);
 
 tic
-[~,~,newLF] = LFFiltShiftSum(pLF,2);
+[~,~,newLF] = LFFiltShiftSum(pLF,slope);
 newLF = squeeze(newLF(:,:,:,:,1));
 toc
 
 tic
-myLF = ATshiftLF(pLF, 2);
+myLF = ATshiftLF(pLF, slope);
 toc
 
 
