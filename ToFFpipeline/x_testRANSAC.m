@@ -12,12 +12,12 @@ d = 0.3/(N-1); % distance between array points
 
 
 
-% l = 114;
-% % k = 159;
-% k = 162;
+l = 114;
+% k = 159;
+k = 162;
 
-l = 60;
-k = 87;
+% l = 60;
+% k = 87;
 
 
 c = 3e8;
@@ -27,18 +27,25 @@ tmp = load('cameraParams.mat');
 K = tmp.cameraParams.IntrinsicMatrix';
 
 % PzVals = linspace(0.8,1.2,20);
-PzVals = linspace(1,1.8,35);
+PzVals = linspace(0.86,1.1,40);
+% PzVals = linspace(1,1.8,35);
 
 % [ii,jj] = meshgrid(1:N);
 % TODO: also check case where Pz fixes every point ie no fit needed? just
 % uses matrix to find Px Py Pz
+% fitters = {@(distSurf,regionCut,pz) runCurveFit(distSurf, regionCut,d),...
+%               @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, regionCut,d,pz),...
+%               @(distSurf,regionCut,pz) runCurveFit(distSurf, true(N,N),d),...
+%               @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, true(N,N),d,pz)};
+% 
+% fitLeg  =["Curve fit (regionCut)", "Curve fit with Pz Fixed (regionCut)", ...
+%     "Curve fit (full)", "Curve fit with Pz Fixed (full)"];
+
+
 fitters = {@(distSurf,regionCut,pz) runCurveFit(distSurf, regionCut,d),...
               @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, regionCut,d,pz),...
-              @(distSurf,regionCut,pz) runCurveFit(distSurf, true(N,N),d),...
-              @(distSurf,regionCut,pz) runCurveFitGivenPz(distSurf, true(N,N),d,pz)};
-
-fitLeg  =["Curve fit (regionCut)", "Curve fit with Pz Fixed (regionCut)", ...
-    "Curve fit (full)", "Curve fit with Pz Fixed (full)"];
+              @(distSurf,regionCut,pz) runCurveFitFullyFixed(distSurf, regionCut,d,pz,K,k,l)};
+fitLeg  =["full fit", "Pz fixed", "all fixed"];
 
 errors = zeros(length(fitters),length(PzVals));
 regionSize = zeros(length(fitters),length(PzVals));
@@ -48,6 +55,7 @@ waitTotal = length(fitters)*length(PzVals);
 waitCount = 0;
 
 for fitIdx = 1:length(fitters)
+    tic
     for depthIdx = 1:length(PzVals)
         waitbar(waitCount/waitTotal)
     
@@ -56,9 +64,9 @@ for fitIdx = 1:length(fitters)
         phaseSurface = squeeze(newLF(:,:,l,k));
         distSurf = phaseSurface*c/(4*pi*f_m);
 
-%         phaseRegions = bwlabel(~edge(distSurf),4);
-        phaseRegions = kmeans(distSurf(:),2);
-        phaseRegions = reshape(phaseRegions,[N,N]);
+        phaseRegions = bwlabel(~edge(distSurf),4);
+%         phaseRegions = kmeans(distSurf(:),2);
+%         phaseRegions = reshape(phaseRegions,[N,N]);
         regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
     
         [fitted_curve, rmse, error, regionCut] = fitters{fitIdx}(distSurf, regionCut,PzVals(depthIdx));
@@ -69,6 +77,7 @@ for fitIdx = 1:length(fitters)
 
         waitCount = waitCount + 1;
     end
+    toc
 end
 
 figure

@@ -15,8 +15,8 @@ K = tmp.cameraParams.IntrinsicMatrix';
 
 % choose a slope and find corresponding Pz
 % slope = -5.2;
-slope = -4.73;
-% slope = -4.82;
+% slope = -4.73;
+slope = -4.82;
 Pz = -K(1,1)*d/slope
 
 % or choose pz to give slope:
@@ -56,17 +56,16 @@ plot3(ii,jj,distSurf,'rx', 'LineWidth',2)
 xlabel('i')
 ylabel('j')
 
-% need to juggle wanting to use as much data as possible vs lowering error
-% regionCut = jj<9;
-regionCut = true(N,N);
-% [fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d);
-[fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
 
+P = Pz*(K\[k;l;1]) + ((N+1)/2)*d*[1;1;0];
+fitted_curve = @(s,t) sqrt(P(3).^2 + (t*d-P(1)).^2 + (s*d-P(2)).^2);
 
 [xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
 hold on
 surf(xx,yy,fitted_curve(xx,yy))
 alpha(0.6);
+
+return
 
 % extract an edge and divide into regions
 % phaseRegions = bwlabel(~edge(distSurf),4);
