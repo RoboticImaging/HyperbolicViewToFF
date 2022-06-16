@@ -27,7 +27,7 @@ dLF_fn = griddedInterpolant(dLF);
 for k = 1:size(dLF,4)
     for l = 1:size(dLF,3)
         % get init Pz guess
-        initPz = computePz(K, dLF(middleIdx,middleIdx,l,k));
+        initPz = computePz(K, dLF(middleIdx,middleIdx,l,k), [k,l]);
 
         % run nearby optimization
         [depth, rmse, nPts] = refineDepthSearch(dLF_fn, K, initPz);
