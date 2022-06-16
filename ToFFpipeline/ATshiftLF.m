@@ -16,6 +16,7 @@ function newLF = ATshiftLF(LF, slope)
 		    
 		    Interpolant = griddedInterpolant( CurSlice );
 		    Interpolant.Method = 'linear';
+% 		    Interpolant.Method = 'nearest';
 		    Interpolant.ExtrapolationMethod = 'nearest';
 		    
 		    CurSlice = Interpolant( {v+VOffset, u+UOffset} );

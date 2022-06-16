@@ -2,8 +2,6 @@ clear;
 clc;
 close all;
 
-% set up memory
-% folder = fullfile("G:\ACFR Winter storage\TOFF\matFiles\boxBlocksWithCoke");
 folder = fullfile("G:\ACFR Winter storage\Winter Project\git\ToF\Winter2020\ToFFexperiments\Results\ToFF\matFiles\blockWithGroundTruth");
 
 N = 15;
@@ -13,27 +11,21 @@ d = 0.3/(N-1); % distance between array points
 tmp = load('cameraParams.mat');
 K = tmp.cameraParams.IntrinsicMatrix';
 
-% choose a slope and find corresponding Pz
-% slope = -5.2;
-% slope = -4.73;
-% slope = -4.82;
-% Pz = -K(1,1)*d/slope
-
-% or choose pz to give slope:
 Pz = 1.4502;
 slope = -K(1,1)*d/Pz;
 
 newLF = ATshiftLF(pLF, slope);
 newAmpLF = ATshiftLF(aLF, slope);
 
-% l = 114;
-% % k = 159;
-% k = 162;
-
 
 l = 114;
 k = 145;
 
+
+figure
+imagesc(squeeze(pLF(8,8,:,:)))
+hold on
+plot(k,l,'rx')
 
 t = 8;
 figure
@@ -70,31 +62,31 @@ hold on
 surf(xx,yy,fitted_curve(xx,yy))
 alpha(0.6);
 
-return
 
-% extract an edge and divide into regions
-% phaseRegions = bwlabel(~edge(distSurf),4);
-phaseRegions = kmeans(distSurf(:),2);
-phaseRegions = reshape(phaseRegions,[N,N]);
-figure
-imagesc(phaseRegions)
+%% grabcuts
 
-regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
-figure
-imagesc(regionCut)
+distSurfNorm = mat2gray(distSurf);
 
-% [fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d)
-[fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
+L = superpixels(distSurfNorm,2);
 
 figure
-[xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
-plot3(ii,jj,distSurf,'rx', 'LineWidth',2)
-hold on
-surf(xx,yy,fitted_curve(xx,yy))
-alpha(0.6);
+imagesc(L)
+% bw = grabcut(distSurf, L, true(size(distSurf)));
+bw = grabcut(distSurfNorm, L, true(size(distSurf)));
 
-coeffvals = coeffvalues(fitted_curve);
-coeffvals
+figure
+imagesc(bw)
 
 
+imgStack = cat(3, mat2gray(ampSurface), mat2gray(distSurf), zeros(size(distSurf)));
+L = superpixels(imgStack,2);
+
+figure
+imagesc(L)
+
+% bw = grabcut(distSurf, L, true(size(distSurf)));
+bw = grabcut(imgStack, L, true(size(distSurf)));
+
+figure
+imagesc(bw)
 

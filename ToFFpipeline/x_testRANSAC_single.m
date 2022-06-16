@@ -62,8 +62,8 @@ ylabel('j')
 % need to juggle wanting to use as much data as possible vs lowering error
 % regionCut = jj<9;
 regionCut = true(N,N);
-% [fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d);
-[fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
+[fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d);
+% [fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
 
 
 [xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
@@ -73,21 +73,23 @@ alpha(0.6);
 
 % extract an edge and divide into regions
 % phaseRegions = bwlabel(~edge(distSurf),4);
-% phaseRegions = kmeans(distSurf(:),2);
-% phaseRegions = reshape(phaseRegions,[N,N]);
+phaseRegions = kmeans(distSurf(:),2);
+phaseRegions = reshape(phaseRegions,[N,N]);
 
 % figure
 % imagesc(phaseRegions)
 % 
-% regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
+regionCut = phaseRegions == phaseRegions((N+1)/2,(N+1)/2);
 
 tol = 0.03; % 3cm
-regionCut  = and(min(fitted_curve(xx,yy),[],'all') - tol < distSurf, distSurf < tol + max(fitted_curve(xx,yy),[],'all'));
+% regionCut  = and(min(fitted_curve(xx,yy),[],'all') - tol < distSurf, distSurf < tol + max(fitted_curve(xx,yy),[],'all'));
+
+regionCut = ii < 11;
 figure
 imagesc(regionCut)
 
-% [fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d)
-[fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
+[fitted_curve, rmse, error] = runCurveFit(distSurf, regionCut,d)
+% [fitted_curve, rmse, error] = runCurveFitGivenPz(distSurf, regionCut,d,Pz);
 
 figure
 [xx,yy] = meshgrid(linspace(1,N,20),linspace(1,N,20));
