@@ -28,9 +28,9 @@ for k = 1:size(dLF,4)
     for l = 1:size(dLF,3)
         % get init Pz guess
         initPz = computePz(K, dLF(middleIdx,middleIdx,l,k), [k,l]);
-
+        
         % run nearby optimization
-        [depth, rmse, nPts] = refineDepthSearch(dLF_fn, K, initPz);
+        [depth, rmse, nPts] = refineDepthSearch(dLF_fn, size(dLF), K, initPz, [k,l]);
 
         % store metrics
         depthImg(l,k) = depth;
