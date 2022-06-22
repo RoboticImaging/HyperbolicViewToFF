@@ -36,15 +36,19 @@ for k = 1:size(dLF,4)
             dLF(8,8,k,l)
             dLF(8,8,l,k)
         end
-        initPz = computePz(K, dLF(middleIdx,middleIdx,l,k), [l,k]);
+        initPz = computePz(K, dLF(middleIdx,middleIdx,l,k), [k,l]);
         
         % run nearby optimization
-        [depth, rmse, nPts] = refineDepthSearch(dLF_fn, size(dLF), K, initPz, [l,k],ToFFarr);
+        [depth, rmse, nPts, debug] = refineDepthSearch(dLF_fn, size(dLF), K, initPz, [k,l],ToFFarr);
 
         % store metrics
         depthImg(l,k) = depth;
         rmseImg(l,k) = rmse;
         nPtsImg(l,k) = nPts;
+
+        Px(l,k) = debug.P(1);
+        Py(l,k) = debug.P(2);
+        Pz(l,k) = debug.P(3);
     end
 end
 
@@ -59,3 +63,17 @@ colorbar
 figure
 imagesc(nPtsImg,[0,ToFFarr.N^2])
 colorbar
+
+
+figure
+subplot(1,3,1)
+imagesc(Px)
+axis image
+subplot(1,3,2)
+imagesc(Py)
+axis image
+subplot(1,3,3)
+imagesc(Pz)
+axis image
+
+

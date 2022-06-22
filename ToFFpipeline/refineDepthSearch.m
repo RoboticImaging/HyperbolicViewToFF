@@ -10,15 +10,14 @@ function [depth, rmse, nPts, debug] = refineDepthSearch(dLF_fn, LFsize, K, initP
     
     % resample the LF to shift it correctly 
     grid = getInterpGrid(K, ToFFarr, LFsize, initPz, pixel);
-    depthSamples = dLF_fn(grid{1},grid{2},grid{3},grid{4});
+    depthSamples = dLF_fn(grid{2},grid{1},grid{4},grid{3});
     depthSamples = reshape(depthSamples,[ToFFarr.N, ToFFarr.N]);
 
-    P = initPz*(K\[pixel';1]) + ((ToFFarr.N+1)/2)*ToFFarr.d*[1;1;0];
+    P = initPz*(K\[pixel';1]) + ToFFarr.d/2*[1;1;0];
 
     % check how well surface fits
     % TODO: check (s,t)
-    fitted_curve = @(s,t) sqrt(P(3).^2 + (s*ToFFarr.d-P(1)).^2 + (t*ToFFarr.d-P(2)).^2);
-%     fitted_curve = @(s,t) sqrt(P(3).^2 + (t*ToFFarr.d-P(1)).^2 + (s*ToFFarr.d-P(2)).^2);
+    fitted_curve = @(s,t) sqrt(P(3).^2 + (s*ToFFarr.d/(ToFFarr.N-1)-P(1)).^2 + (t*ToFFarr.d/(ToFFarr.N-1)-P(2)).^2);
 
     % get subset
     [ii,jj] = meshgrid(1:ToFFarr.N);
