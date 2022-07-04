@@ -7,7 +7,10 @@ close all;
 addpath('C:\Program Files\ToF\lib\matlab\tof_chrono');
 
 %% input array params
-n = [0;1;0];
+% optical axis (note that z should always be 0):
+% n = [0;1;0];
+opticalAxisDeviation = -10;
+n = [sind(opticalAxisDeviation);cosd(opticalAxisDeviation);0];
 n = n./norm(n);
 
 baseline = 300/1000; % mm
@@ -18,9 +21,10 @@ N = 15; assert(N>1);
 seperation = baseline/(N-1);
 
 % bottomLeftCorner position
-bottomLeftCorner = [300 -25 250]./1000;
+bottomLeftCorner = [300 -15  250]./1000;
+% bottomLeftCorner = [450 -40 250]./1000;
 
-stepTime = 0.5;
+stepTime = 0.9;
 
 % default position of camera at UR5 theta = 0; this needs to be rotated to
 % n
@@ -55,7 +59,7 @@ moveDirection = moveDirection./norm(moveDirection);
 
 
 %% setup robot
-HOST = '129.78.214.100';
+HOST = '172.17.7.82';
 PORT_30003 = 30003;
 
 robotSocket = tcpip(HOST, PORT_30003);
@@ -64,43 +68,43 @@ fopen(robotSocket);
 
 % robotSocket = 1;
 
-fprintf(sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=1, v=1, t=10, r=0)\n',...
+fprintf(sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=0, v=0, t=15, r=0)\n',...
     bottomLeftCorner(1),bottomLeftCorner(2),bottomLeftCorner(3),orientationVec(1),orientationVec(2),orientationVec(3)));
-fprintf(robotSocket,sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=1, v=1, t=5, r=0)\n',...
+fprintf(robotSocket,sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=0.05, v=0.05, t=0, r=0)\n',...
     bottomLeftCorner(1),bottomLeftCorner(2),bottomLeftCorner(3),orientationVec(1),orientationVec(2),orientationVec(3)));
 
 
 % check center position and orientation is what you expect
-pause(6) % make sure everything is in right position
-
+pause() % make sure everything is in right position
 
 
 %% prepare results location
 
-folder = "Results/ToFF/CsfFiles/blocksWithSat/";
+% folder = "Results/ToFF/CsfFiles/blocksWithSat/";
+% 
+% sceneDescription = "true pz=0.87, screen added to induce saturation";
+% 
+% 
+% numFrames = 2; % The number of frames to capture 
+% dropFrames = 5; % The number of frames to drop before capturing 
+% 
+% integrationTime = 1000;
+% frameTime = 2200;
+% DACvalue = 550;
+% configFile = "kea_3step_50MHz.bin";
+% 
+% 
+% % check to make sure we aren't overrriding anything important:
+% if exist(folder, 'dir')
+%     x = input('Folder exists, overwrite? (y/n) ','s');
+%     if ~((x == 'y') || (x == 'Y'))
+%         return
+%     end
+% else
+%     mkdir(folder)
+% end
 
-sceneDescription = "true pz=0.87, screen added to induce saturation";
-
-
-numFrames = 2; % The number of frames to capture 
-dropFrames = 5; % The number of frames to drop before capturing 
-
-integrationTime = 1000;
-frameTime = 2200;
-DACvalue = 550;
-configFile = "kea_3step_50MHz.bin";
-
-
-% check to make sure we aren't overrriding anything important:
-if exist(folder, 'dir')
-    x = input('Folder exists, overwrite? (y/n) ','s');
-    if ~((x == 'y') || (x == 'Y'))
-        return
-    end
-else
-    mkdir(folder)
-end
-
+%{
 %% camera setup
 
 csf_types = CSFType(); 
@@ -166,6 +170,7 @@ else
 end
 fprintf(fid, 'integrationTime = %d\n',integrationTime);
 fprintf(fid, 'configFile: %s\n\n',configFile);
+%}
 
 %% Take data
 row = 1;
@@ -178,22 +183,23 @@ while row <= N
     end
     while col <=N && col >=1
         fprintf('Taking position %d/%d\n',posCounter,N^2)
-        writer.open(strcat(folder,sprintf('%d-%d.csf',row,col)), cam); 
+%         writer.open(strcat(folder,sprintf('%d-%d.csf',row,col)), cam); 
 
         pos = bottomLeftCorner + (row-1)*seperation*up' + (col-1)*seperation*moveDirection;
 
         % move arm
         fprintf(robotSocket,sprintf('movej(p[%.7f,%.7f,%.7f,%.7f,%.7f,%.7f],a=1, v=1, t=%.5f, r=0)\n',...
         pos(1),pos(2),pos(3),orientationVec(1),orientationVec(2),orientationVec(3),stepTime));
-        pause(1.9*stepTime)
+        pause(1.2*stepTime)
 
         % record measured position
     %     measuredPos = readrobotpose(socket);
-        measuredPos = pos;
-        fprintf(fid, 'Photo taken with oritentation: [');
-        fprintf(fid, ' %.4f ', measuredPos);
-        fprintf(fid, ']\n');
+%         measuredPos = pos;
+%         fprintf(fid, 'Photo taken with oritentation: [');
+%         fprintf(fid, ' %.4f ', measuredPos);
+%         fprintf(fid, ']\n');
 
+        %{
         % take photo
         for i = 1:dropFrames
             [hdrs,frames] = cam.getFrames(); 
@@ -206,6 +212,7 @@ while row <= N
             end
         end
         writer.close();
+        %}
 
         % update cols
         col = col + (-1)^(row-1);
@@ -213,12 +220,12 @@ while row <= N
     end
     row = row + 1;
 end
-cam.stop();
-cam.close();
-
-fprintf(fid, '\n\n');
-fprintf(fid, 'Test finished successfuly at %s\n',string(datetime(now,'ConvertFrom','datenum')));
-fclose(fid);
+% cam.stop();
+% cam.close();
+% 
+% fprintf(fid, '\n\n');
+% fprintf(fid, 'Test finished successfuly at %s\n',string(datetime(now,'ConvertFrom','datenum')));
+% fclose(fid);
 fclose(robotSocket);
 
 
