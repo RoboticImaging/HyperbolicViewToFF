@@ -90,7 +90,6 @@ dropFrames = 5; % The number of frames to drop before capturing
 
 integrationTime = 1000;
 frameTime = 2200;
-DACvalue = 550;
 configFile = "kea_3step_50MHz.bin";
 
 
@@ -112,7 +111,7 @@ serial = '201000b';
 % Find and connect to the camera based on its serial number
 fprintf("creating camera...\n")
 cam = tof.KeaCamera(tof.ProcessingConfig(), serial);
-config = tof.CameraConfig("kea_3step_50MHz.bin");
+config = tof.CameraConfig(configFile);
 config.setGain(2)
 cam.setCameraConfig(config);
 
@@ -155,6 +154,27 @@ fprintf(fid, 'configFile: %s\n\n',configFile);
 cam.start(); 
 pause(2); % let lasers warm up
 
+% take image from center of array first
+row = (N+1)/2;
+col = (N+1)/2;
+pos = bottomLeftCorner + (row-1)*seperation*up' + (col-1)*seperation*moveDirection;
+writer = tof.createCsfWriterCamera(fullfile(saveTarget,sprintf('centerHQ.csf')), cam);
+movePose(robotSocket, pos, orientationVec, 't', 10);
+pause(12)
+
+% take photo
+for i = 1:dropFrames
+    frames = cam.getFrames();
+end
+
+for i = 1:(numFrames*N^2)
+    frames = cam.getFrames();
+    for frame = frames
+        writer.writeFrame(frame);
+    end
+end
+
+% now do the actual array
 row = 1;
 posCounter = 1;
 while row <= N
@@ -171,8 +191,8 @@ while row <= N
 
         
         % move arm
-        fprintf(robotSocket,sprintf('movej(p[%.7f,%.7f,%.7f,%.7f,%.7f,%.7f],a=1, v=1, t=%.5f, r=0)\n',...
-        pos(1),pos(2),pos(3),orientationVec(1),orientationVec(2),orientationVec(3),stepTime));
+%         fprintf(robotSocket,sprintf('movej(p[%.7f,%.7f,%.7f,%.7f,%.7f,%.7f],a=1, v=1, t=%.5f, r=0)\n',...
+%         pos(1),pos(2),pos(3),orientationVec(1),orientationVec(2),orientationVec(3),stepTime));
         movePose(robotSocket, pos, orientationVec, 't', stepTime)
         pause(1.2*stepTime)
 
