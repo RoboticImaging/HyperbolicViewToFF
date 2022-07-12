@@ -8,9 +8,9 @@ addpath('C:\Program Files\ToF\lib\matlab\tof_chrono');
 
 %% input array params
 % optical axis (note that z should always be 0):
-% n = [0;1;0];
-opticalAxisDeviation = -10;
-n = [sind(opticalAxisDeviation);cosd(opticalAxisDeviation);0];
+n = [0;1;0];
+% opticalAxisDeviation = -10;
+% n = [sind(opticalAxisDeviation);cosd(opticalAxisDeviation);0];
 n = n./norm(n);
 
 baseline = 300/1000; % mm
@@ -25,6 +25,7 @@ bottomLeftCorner = [300 -15  250]./1000;
 % bottomLeftCorner = [450 -40 250]./1000;
 
 stepTime = 0.9;
+% stepTime = 4;
 
 % default position of camera at UR5 theta = 0; this needs to be rotated to
 % n
@@ -62,16 +63,15 @@ moveDirection = moveDirection./norm(moveDirection);
 HOST = '172.17.7.82';
 PORT_30003 = 30003;
 
-robotSocket = tcpip(HOST, PORT_30003);
+robotSocket = openArmConnection(HOST, PORT_30003);
 
-fopen(robotSocket);
-
+% debug mode:
 % robotSocket = 1;
 
-fprintf(sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=0, v=0, t=15, r=0)\n',...
-    bottomLeftCorner(1),bottomLeftCorner(2),bottomLeftCorner(3),orientationVec(1),orientationVec(2),orientationVec(3)));
-fprintf(robotSocket,sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=0.05, v=0.05, t=0, r=0)\n',...
-    bottomLeftCorner(1),bottomLeftCorner(2),bottomLeftCorner(3),orientationVec(1),orientationVec(2),orientationVec(3)));
+initCommand = sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=0.05, v=0.05, t=0, r=0)\n',...
+    bottomLeftCorner(1),bottomLeftCorner(2),bottomLeftCorner(3),orientationVec(1),orientationVec(2),orientationVec(3));
+fprintf(sprintf('Sending Command: %s', initCommand));
+fprintf(robotSocket,initCommand);
 
 
 % check center position and orientation is what you expect
@@ -80,75 +80,52 @@ pause() % make sure everything is in right position
 
 %% prepare results location
 
-% folder = "Results/ToFF/CsfFiles/blocksWithSat/";
-% 
-% sceneDescription = "true pz=0.87, screen added to induce saturation";
-% 
-% 
-% numFrames = 2; % The number of frames to capture 
-% dropFrames = 5; % The number of frames to drop before capturing 
-% 
-% integrationTime = 1000;
-% frameTime = 2200;
-% DACvalue = 550;
-% configFile = "kea_3step_50MHz.bin";
-% 
-% 
-% % check to make sure we aren't overrriding anything important:
-% if exist(folder, 'dir')
-%     x = input('Folder exists, overwrite? (y/n) ','s');
-%     if ~((x == 'y') || (x == 'Y'))
-%         return
-%     end
-% else
-%     mkdir(folder)
-% end
+saveTarget = "Results/ToFF/CsfFiles/blocksWithSat/";
 
-%{
+sceneDescription = "true pz=0.87, screen added to induce saturation";
+
+
+numFrames = 2; % The number of frames to capture 
+dropFrames = 5; % The number of frames to drop before capturing 
+
+integrationTime = 1000;
+frameTime = 2200;
+DACvalue = 550;
+configFile = "kea_3step_50MHz.bin";
+
+
+% check to make sure we aren't overrriding anything important:
+if exist(saveTarget, 'dir')
+    x = input('saveTarget exists, overwrite? (y/n) ','s');
+    if ~((x == 'y') || (x == 'Y'))
+        return
+    end
+else
+    mkdir(saveTarget)
+end
+
+
 %% camera setup
+% The serial number of the camera to connect to.
+serial = '201000b';
 
-csf_types = CSFType(); 
-% Save the amplitude and phase frames 
-cap_types = [ csf_types('amp'),csf_types('phi') ]; 
-% The depthPipeline configuration file, leave blank if none is used. 
-pipelineFile = 'filter_config.json'; 
-% The serial number of the camera to connect to. 
-serial = '201000b'; 
+% Find and connect to the camera based on its serial number
+fprintf("creating camera...\n")
+cam = tof.KeaCamera(tof.ProcessingConfig(), serial);
+config = tof.CameraConfig("kea_3step_50MHz.bin");
+config.setGain(2)
+cam.setCameraConfig(config);
 
-cam = KeaCameraMex();
-cam.open("",serial,3956,0,32500); 
-% Set the camera configuration
-cam.setConfiguration(configFile); 
-% Set the integration time and raw frame time. 
-cam.setFrameTime(frameTime); 
-cam.setIntegrationTime(integrationTime); 
-cam.setDAC(DACvalue); 
-cam.close();
 
-cam.open(pipelineFile,serial,3956,0,32500); 
+% Select to stream amplitude and z frames from the camera
+tof.selectStreams(cam, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
 
-% Example of changing the depthPipeline configuration. 
-% For this case we set the median filter to enabled. 
-config = cam.getProcessingConfig(); 
-config.median.enabled = false; 
-% config.median.enabled = true;  
-% config.median.size = int32(5); 
-cam.setProcessingConfig( config ); 
 
-% Get the stream list and select the chosen streams 
-streamList = cam.getSteamList(); 
-exportList = selectStreamList(cap_types,streamList); 
-cam.setStreamList(exportList); 
 
-% Init the CSF writer 
-writer = CSFWriterMex();
-
-cam.start(); 
-pause(2); % let lasers warm up
 
 
 % information about the experiment
-fid = fopen(strcat(folder,"info.txt"), 'wt' );
+fid = fopen(strcat(saveTarget,"info.txt"), 'wt' );
 
 fprintf(fid, 'Horizontal Scan taken %s\n',string(datetime(now,'ConvertFrom','datenum')));
 fprintf(fid, 'Notes: %s\n',sceneDescription);
@@ -162,17 +139,22 @@ fprintf(fid, 'N = %d\n',N);
 fprintf(fid, '\n**** Camera Params ****\n');
 fprintf(fid, 'numFrames = %d\n',numFrames);
 fprintf(fid, 'dropFrames = %d\n',dropFrames);
-fprintf(fid, 'DACvalue = %d\n',DACvalue);
-if config.median.enabled == true
-    fprintf(fid, 'median filter  = %d\n',config.median.size);
-else
-    fprintf(fid, 'median filter  off\n');
-end
-fprintf(fid, 'integrationTime = %d\n',integrationTime);
+% fprintf(fid, 'DACvalue = %d\n',DACvalue);
+% if config.median.enabled == true
+%     fprintf(fid, 'median filter  = %d\n',config.median.size);
+% else
+%     fprintf(fid, 'median filter  off\n');
+% end
+% fprintf(fid, 'integrationTime = %d\n',integrationTime);
 fprintf(fid, 'configFile: %s\n\n',configFile);
-%}
+
 
 %% Take data
+
+
+cam.start(); 
+pause(2); % let lasers warm up
+
 row = 1;
 posCounter = 1;
 while row <= N
@@ -183,36 +165,37 @@ while row <= N
     end
     while col <=N && col >=1
         fprintf('Taking position %d/%d\n',posCounter,N^2)
-%         writer.open(strcat(folder,sprintf('%d-%d.csf',row,col)), cam); 
+        writer = tof.createCsfWriterCamera(fullfile(saveTarget,sprintf('%d-%d.csf',row,col)), cam);
 
         pos = bottomLeftCorner + (row-1)*seperation*up' + (col-1)*seperation*moveDirection;
 
+        
         % move arm
         fprintf(robotSocket,sprintf('movej(p[%.7f,%.7f,%.7f,%.7f,%.7f,%.7f],a=1, v=1, t=%.5f, r=0)\n',...
         pos(1),pos(2),pos(3),orientationVec(1),orientationVec(2),orientationVec(3),stepTime));
+        movePose(robotSocket, pos, orientationVec, 't', stepTime)
         pause(1.2*stepTime)
 
         % record measured position
     %     measuredPos = readrobotpose(socket);
-%         measuredPos = pos;
-%         fprintf(fid, 'Photo taken with oritentation: [');
-%         fprintf(fid, ' %.4f ', measuredPos);
-%         fprintf(fid, ']\n');
+        measuredPos = pos;
+        fprintf(fid, 'Photo taken with oritentation: [');
+        fprintf(fid, ' %.4f ', measuredPos);
+        fprintf(fid, ']\n');
 
-        %{
+       
         % take photo
         for i = 1:dropFrames
-            [hdrs,frames] = cam.getFrames(); 
+            frames = cam.getFrames();
         end
 
         for i = 1:numFrames
-            [hdrs,frames] = cam.getFrames();
-            for l = 1:length(frames)
-                writer.writeFrame( hdrs(l), frames{l} ); 
+            frames = cam.getFrames();
+            for frame = frames
+                writer.writeFrame(frame);
             end
         end
-        writer.close();
-        %}
+        
 
         % update cols
         col = col + (-1)^(row-1);
@@ -220,13 +203,14 @@ while row <= N
     end
     row = row + 1;
 end
-% cam.stop();
-% cam.close();
-% 
-% fprintf(fid, '\n\n');
-% fprintf(fid, 'Test finished successfuly at %s\n',string(datetime(now,'ConvertFrom','datenum')));
-% fclose(fid);
-fclose(robotSocket);
+cam.stop();
+cam.close();
+
+fprintf(fid, '\n\n');
+fprintf(fid, 'Test finished successfuly at %s\n',string(datetime(now,'ConvertFrom','datenum')));
+fclose(fid);
+
+closeArmConnection(robotSocket);
 
 
 

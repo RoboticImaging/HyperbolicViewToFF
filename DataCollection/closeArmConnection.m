@@ -1,5 +1,5 @@
 function closeArmConnection(socket)
     % Closes the TCPIP connection to the arm
     fclose(socket);
-    fprintf('Connected to arm\n');
+    fprintf('Disconnected from arm\n');
 end
