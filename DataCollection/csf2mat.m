@@ -2,38 +2,47 @@ clear;
 clc;
 
 
-N = 15;
+N = 15; 
 
-dataFolder = "Results/ToFF/CsfFiles/blocksWithSat/";
-resultsFolder = "Results/ToFF/matFiles/blocksWithSat/";
+dataFolder = "../data/results/many_objects";
+resultsFolder = "../data/results/mat/many_objects";
 
-mkdir(resultsFolder)
+if ~exist(resultsFolder, "dir")
+    mkdir(resultsFolder)
+end
 
-copyfile(strcat(dataFolder,"info.txt"),resultsFolder)
+copyfile(fullfile(dataFolder,"info.txt"),resultsFolder)
 
-cameraParams = load("cameraParams.mat");
-
+tmp = load("cameraParams_july_2022.mat");
+cameraParams = tmp.cameraParams_july_2022;
 
 for j = 1:N
     for k = 1:N
-        fileName = strcat(dataFolder,sprintf('%d-%d.csf',j,k));
-        csf_type = CSFType(); 
-        [~,frames_phi] = bufferCSF(fileName, csf_type('phi') ); 
-        [~,frames_amp] = bufferCSF(fileName, csf_type('amp') ); 
-        
-        % flip things so they are the right way around and average across
-        % all frames
-        amp = flip(mean(frames_amp,3)',2);
-        phi = flip(mean(frames_phi,3)',2);
+% for j = 1:1
+%     for k = 1:1
+        fileName = fullfile(dataFolder,sprintf('%d-%d.csf',j,k));
+        cell_of_imgs = readCSF(fileName, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
+
+        amp = mean(cell_of_imgs{1}, 3);
+        phi = mean(cell_of_imgs{2}, 3);
 
         % rectifications
         [amp,~] = undistortImage(amp,cameraParams);
         [phi,~] = undistortImage(phi,cameraParams);
         
-        save(strcat(resultsFolder,sprintf('%d-%d_phase.mat',j,k)), 'phi')
-        save(strcat(resultsFolder,sprintf('%d-%d_amplitude.mat',j,k)), 'amp')
+        save(fullfile(resultsFolder,sprintf('%d-%d_phase.mat',j,k)), 'phi')
+        save(fullfile(resultsFolder,sprintf('%d-%d_amplitude.mat',j,k)), 'amp')
     end
 end
 
+fileName = fullfile(dataFolder,"centerHQ.csf");
+cell_of_imgs = readCSF(fileName, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
+amp = mean(cell_of_imgs{1}, 3);
+phi = mean(cell_of_imgs{2}, 3);
 
+% rectifications
+[amp,~] = undistortImage(amp,cameraParams);
+[phi,~] = undistortImage(phi,cameraParams);
 
+save(fullfile(resultsFolder,"centerHQ_phase.mat"), 'phi')
+save(fullfile(resultsFolder,"centerHQ_amplitude.mat"), 'amp')

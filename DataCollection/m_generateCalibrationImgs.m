@@ -2,16 +2,17 @@ clear;
 clc;
 
 nImgs = 20;
+startIdx = 31;
 
 numFrames = 100; % The number of frames to capture
 dropFrames = 100; % The number of frames to drop before capturing
 
-targetLoc = "../data/calib/csf/withPhase";
+targetLoc = "../data/calib/csf/take3";
 if ~exist(targetLoc,"dir")
     mkdir(targetLoc)
 end
 
-pauseTime = 3;
+% pauseTime = 3;
 
 % The serial number of the camera to connect to.
 serial = '201000b';
@@ -27,8 +28,9 @@ cam.setCameraConfig(config);
 % Select to stream amplitude and z frames from the camera
 tof.selectStreams(cam, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
 
-for imgIdx = 1:nImgs
-    pause(pauseTime)
+for imgIdx = startIdx:(startIdx+nImgs)
+%     pause(pauseTime)
+    pause
     writer = tof.createCsfWriterCamera(fullfile(targetLoc,sprintf("%d.csf",imgIdx)), cam);
 
     cam.start();

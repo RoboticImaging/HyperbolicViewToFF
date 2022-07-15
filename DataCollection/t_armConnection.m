@@ -16,9 +16,11 @@ x = 1/sqrt(2)*[1;-1;0];
 y = 1/sqrt(2)*[1;1;0];
 RglobalToDefault = [x,y,[0;0;1]];
 
-RglobalToDesired = [0 1 0;
-                                  0 0 1;
-                                  1 0 0];
+% RglobalToDesired = [0 -1 0;
+%                                   0 0 -1;
+%                                   1 0 0];
+
+RglobalToDesired = eye(3);
 
 RDefaultToDesired = RglobalToDesired*RglobalToDefault';
 

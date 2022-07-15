@@ -4,7 +4,6 @@ clear;
 clc;
 close all;
 
-addpath('C:\Program Files\ToF\lib\matlab\tof_chrono');
 
 %% input array params
 % optical axis (note that z should always be 0):
@@ -80,9 +79,9 @@ pause() % make sure everything is in right position
 
 %% prepare results location
 
-saveTarget = "Results/ToFF/CsfFiles/blocksWithSat/";
+saveTarget = "../data/results/many_objects";
 
-sceneDescription = "true pz=0.87, screen added to induce saturation";
+sceneDescription = "few objects all fairly close.";
 
 
 numFrames = 2; % The number of frames to capture 
@@ -124,7 +123,7 @@ tof.selectStreams(cam, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
 
 
 % information about the experiment
-fid = fopen(strcat(saveTarget,"info.txt"), 'wt' );
+fid = fopen(fullfile(saveTarget,"info.txt"), 'wt' );
 
 fprintf(fid, 'Horizontal Scan taken %s\n',string(datetime(now,'ConvertFrom','datenum')));
 fprintf(fid, 'Notes: %s\n',sceneDescription);
@@ -174,6 +173,11 @@ for i = 1:(numFrames*N^2)
     end
 end
 
+pause(1);
+pos = bottomLeftCorner;
+movePose(robotSocket, pos, orientationVec, 't', 10);
+pause(10);
+
 % now do the actual array
 row = 1;
 posCounter = 1;
@@ -215,6 +219,7 @@ while row <= N
                 writer.writeFrame(frame);
             end
         end
+        writer.delete();
         
 
         % update cols
@@ -224,7 +229,6 @@ while row <= N
     row = row + 1;
 end
 cam.stop();
-cam.close();
 
 fprintf(fid, '\n\n');
 fprintf(fid, 'Test finished successfuly at %s\n',string(datetime(now,'ConvertFrom','datenum')));

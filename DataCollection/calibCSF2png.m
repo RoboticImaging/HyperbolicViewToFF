@@ -2,11 +2,10 @@ clear;
 clc;
 close all
 
-N = 5;
 
 pathPrefix = "../data/calib/";
-dataFolder = fullfile(pathPrefix,"csf/withPhase");
-target = fullfile(pathPrefix,"png/withPhase");
+dataFolder = fullfile(pathPrefix,"csf/take3");
+target = fullfile(pathPrefix,"png/take3");
 
 if ~exist(target,"dir")
     mkdir(target)
@@ -22,7 +21,7 @@ for imgIdx = 1:length(filesToChange)
     
     while csfRead.frameIndex ~= csfRead.numberOfFrames()
         frames = csfRead.readFrame();
-        if frames.frameType() == tof.FrameType.INTENSITY
+        if frames.frameType() == tof.FrameType.AMPLITUDE
             frame(:,:,csfRead.frameIndex) = frames.data;
         end
     end
