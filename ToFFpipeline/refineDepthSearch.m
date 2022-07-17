@@ -8,9 +8,12 @@ function [depth, rmse, nPts, debug] = refineDepthSearch(dLF_fn, LFsize, K, initP
         ToFFarr
     end
     
-    [error, P, subset] = checkSurface(initPz, K, ToFFarr, LFsize, dLF_fn, pixel);
+%     [error, P, subset] = checkSurface(initPz, K, ToFFarr, LFsize, dLF_fn, pixel);
 
+    fn = @(Pz) checkSurface(Pz, K, ToFFarr, LFsize, dLF_fn, pixel);
+    Pz = fminsearch(@(pz) rms(fn(pz)), initPz);
     
+    [error, P, subset] = checkSurface(Pz, K, ToFFarr, LFsize, dLF_fn, pixel);
 
     % outputs
     depth = norm(P);

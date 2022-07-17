@@ -1,8 +1,5 @@
-function [phaseLF,ampLF] = readToFF(pathToMat,N)
+function [phaseLF,ampLF] = readToFF(pathToMat,N, cameraParams)
 
-    % camera params for calib
-    temp = load('cameraParams.mat');
-    cameraParams = temp.cameraParams;
     
     % get sizes of LF
     fileName = fullfile(pathToMat,"1-1_amplitude.mat");
@@ -20,12 +17,12 @@ function [phaseLF,ampLF] = readToFF(pathToMat,N)
             fileName = fullfile(pathToMat, sprintf("%d-%d_amplitude.mat",l,k));
     
             temp = load(fileName);
-            [ampLF(l,k,:,:),~] = undistortImage(temp.amp,cameraParams);
+            ampLF(l,k,:,:) = temp.amp;
     
             fileName = fullfile(pathToMat, sprintf("%d-%d_phase.mat",l,k));
     
             temp = load(fileName);
-            [phaseLF(l,k,:,:),~] = undistortImage(temp.phi,cameraParams);
+            phaseLF(l,k,:,:) = temp.phi;
         end
     end
 

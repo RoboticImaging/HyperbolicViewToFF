@@ -1,4 +1,5 @@
 function [error, P, subset] = checkSurface(Pz, K, ToFFarr, LFsize, dLF_fn, pixel)
+
     % resample the LF to shift it correctly 
     grid = getInterpGrid(K, ToFFarr, LFsize, Pz, pixel);
     depthSamples = dLF_fn(grid{2},grid{1},grid{4},grid{3});
@@ -8,7 +9,8 @@ function [error, P, subset] = checkSurface(Pz, K, ToFFarr, LFsize, dLF_fn, pixel
 
     % check how well surface fits
     % TODO: check (s,t)
-    fitted_curve = @(s,t) sqrt(P(3).^2 + (s*ToFFarr.d/(ToFFarr.N-1)-P(1)).^2 + (t*ToFFarr.d/(ToFFarr.N-1)-P(2)).^2);
+    seperation = ToFFarr.d/(ToFFarr.N-1)-;
+    fitted_curve = @(s,t) sqrt(P(3).^2 + (s*seperation-P(1)).^2 + (t*seperation-P(2)).^2);
 
     % get subset
     [ii,jj] = meshgrid(1:ToFFarr.N);
