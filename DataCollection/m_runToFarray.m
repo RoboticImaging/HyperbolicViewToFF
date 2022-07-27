@@ -88,9 +88,10 @@ sceneDescription = "Black head with glossy finish";
 numFrames = 2; % The number of frames to capture 
 dropFrames = 5; % The number of frames to drop before capturing 
 
-integrationTime = 1000;
-configFile = "kea_3step_50MHz.bin";
 
+configFile = "kea_3step_50MHz.bin";
+LFargs.configFile = configFile;
+LFargs.f = 50e6; 
 
 % check to make sure we aren't overrriding anything important:
 if exist(saveTarget, 'dir')
@@ -122,8 +123,15 @@ tof.selectStreams(cam, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
 fprintf("Done!\n");
 
 
+% finalise LF args to save and have machine readable
+tmp = load('cameraParams_july_2022.mat');
+LFargs.N = N;
+LFargs.baseline = baseline;
+LFargs.numFrames = numFrames;
+LFargs.K = tmp.cameraParams_july_2022.IntrinsicMatrix';
+save(fullfile(saveTarget,"LFargs.mat"),'LFargs');
 
-% information about the experiment
+% information about the experiment for human readable
 fid = fopen(fullfile(saveTarget,"info.txt"), 'wt' );
 
 fprintf(fid, 'Horizontal Scan taken %s\n',string(datetime(now,'ConvertFrom','datenum')));
