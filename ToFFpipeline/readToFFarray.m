@@ -3,21 +3,23 @@ function [dLF, ampLF, LFargs] = readToFFarray(path)
     arguments
         path string {exist(path,'dir')}
     end
-    
-    fileName = fullfile(pathToMat,"1-1_amplitude.mat");
+
+    LFargs = readLFargs(path);
+
+    fileName = fullfile(path,"1-1_amplitude.mat");
     temp = load(fileName);
 
-    phaseLF = zeros(N,N,size(temp.amp,1),size(temp.amp,2));
-    ampLF = zeros(N,N,size(temp.amp,1),size(temp.amp,2));
+    phaseLF = zeros(LFargs.N,LFargs.N,size(temp.amp,1),size(temp.amp,2));
+    ampLF = zeros(LFargs.N,LFargs.N,size(temp.amp,1),size(temp.amp,2));
 
-    for l = 1:N
-        for k = 1:N
-            fileName = fullfile(pathToMat, sprintf("%d-%d_amplitude.mat",l,k));
+    for l = 1:LFargs.N
+        for k = 1:LFargs.N
+            fileName = fullfile(path, sprintf("%d-%d_amplitude.mat",l,k));
     
             temp = load(fileName);
             ampLF(l,k,:,:) = temp.amp;
     
-            fileName = fullfile(pathToMat, sprintf("%d-%d_phase.mat",l,k));
+            fileName = fullfile(path, sprintf("%d-%d_phase.mat",l,k));
     
             temp = load(fileName);
             phaseLF(l,k,:,:) = temp.phi;
@@ -26,5 +28,7 @@ function [dLF, ampLF, LFargs] = readToFFarray(path)
 
     phaseLF = flip(phaseLF,1);
     ampLF = flip(ampLF,1);
+
+    dLF = phase2Dist(phaseLF, LFargs.f);
 
 end
