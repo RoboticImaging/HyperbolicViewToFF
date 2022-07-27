@@ -4,9 +4,9 @@ clc;
 
 N = 15; 
 
-dataFolder = "../data/results/many_objects";
-resultsFolder = "../data/results/mat/many_objects";
-
+folderName = 'gray_head';
+dataFolder = fullfile("../data/results/csf",folderName);
+resultsFolder = fullfile("../data/results/mat",folderName);
 if ~exist(resultsFolder, "dir")
     mkdir(resultsFolder)
 end

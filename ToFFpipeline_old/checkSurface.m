@@ -9,7 +9,7 @@ function [error, P, subset] = checkSurface(Pz, K, ToFFarr, LFsize, dLF_fn, pixel
 
     % check how well surface fits
     % TODO: check (s,t)
-    seperation = ToFFarr.d/(ToFFarr.N-1)-;
+    seperation = ToFFarr.d/(ToFFarr.N-1);
     fitted_curve = @(s,t) sqrt(P(3).^2 + (s*seperation-P(1)).^2 + (t*seperation-P(2)).^2);
 
     % get subset

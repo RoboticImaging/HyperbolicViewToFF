@@ -16,6 +16,7 @@ baseline = 300/1000; % mm
 assert(baseline>0);
 
 N = 15; assert(N>1);
+% N = 5; assert(N>1);
 
 seperation = baseline/(N-1);
 
@@ -23,7 +24,7 @@ seperation = baseline/(N-1);
 bottomLeftCorner = [300 -15  250]./1000;
 % bottomLeftCorner = [450 -40 250]./1000;
 
-stepTime = 0.9;
+stepTime = 0.8;
 % stepTime = 4;
 
 % default position of camera at UR5 theta = 0; this needs to be rotated to
@@ -79,16 +80,15 @@ pause() % make sure everything is in right position
 
 %% prepare results location
 
-saveTarget = "../data/results/many_objects";
+saveTarget = "../data/results/csf/black_shiny_head";
 
-sceneDescription = "few objects all fairly close.";
+sceneDescription = "Black head with glossy finish";
 
 
 numFrames = 2; % The number of frames to capture 
 dropFrames = 5; % The number of frames to drop before capturing 
 
 integrationTime = 1000;
-frameTime = 2200;
 configFile = "kea_3step_50MHz.bin";
 
 
@@ -108,10 +108,10 @@ end
 serial = '201000b';
 
 % Find and connect to the camera based on its serial number
-fprintf("creating camera...\n")
+fprintf("creating camera...");
 cam = tof.KeaCamera(tof.ProcessingConfig(), serial);
 config = tof.CameraConfig(configFile);
-config.setGain(2)
+config.setGain(1.8)
 cam.setCameraConfig(config);
 
 
@@ -119,6 +119,7 @@ cam.setCameraConfig(config);
 tof.selectStreams(cam, [tof.FrameType.AMPLITUDE, tof.FrameType.PHASE]);
 
 
+fprintf("Done!\n");
 
 
 
@@ -150,9 +151,8 @@ fprintf(fid, 'configFile: %s\n\n',configFile);
 %% Take data
 
 
-cam.start(); 
-pause(2); % let lasers warm up
 
+fprintf("Taking HQ image...")
 % take image from center of array first
 row = (N+1)/2;
 col = (N+1)/2;
@@ -160,6 +160,9 @@ pos = bottomLeftCorner + (row-1)*seperation*up' + (col-1)*seperation*moveDirecti
 writer = tof.createCsfWriterCamera(fullfile(saveTarget,sprintf('centerHQ.csf')), cam);
 movePose(robotSocket, pos, orientationVec, 't', 10);
 pause(12)
+
+cam.start(); 
+pause(2); % let lasers warm up
 
 % take photo
 for i = 1:dropFrames
@@ -172,6 +175,7 @@ for i = 1:(numFrames*N^2)
         writer.writeFrame(frame);
     end
 end
+fprintf("Done!\n");
 
 pause(1);
 pos = bottomLeftCorner;

@@ -2,3 +2,5 @@ data
 *.pdf
 *.asv
 *.mat
+*.csf
+todo.txt
