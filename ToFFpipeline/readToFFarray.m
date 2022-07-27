@@ -31,4 +31,6 @@ function [dLF, ampLF, LFargs] = readToFFarray(path)
 
     dLF = phase2Dist(phaseLF, LFargs.f);
 
+    LFargs.size = size(dLF);
+
 end
