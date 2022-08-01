@@ -5,9 +5,13 @@ function [error] = computeSinglePixelFieldSingleDepth (dLFinterp, LFargs, pixel,
         pixel (2,1) double % in form [k;l]
         Pz double
     end
-    % get an interpolation grid
+
+    % extract data
+    grid = getOtherViewIndexes (pixel, LFargs, Pz);
+    dataGrid = dLFinterp(grid{2}(:), grid{1}(:), grid{4}(:), grid{3}(:));
 
     % compute the theoretical surface
+    theoreticalGrid = getTheoreticalSurface (pixel, Pz, LFargs);
 
     % get Goodness of Fit
 

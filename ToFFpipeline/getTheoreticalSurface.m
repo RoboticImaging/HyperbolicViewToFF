@@ -7,9 +7,10 @@ function [distGrid] = getTheoreticalSurface (pixel, radialDist, LFargs)
         LFargs
     end
     
-    P = radialDist2point(radialDist, LFargs, pixel);
+%     P = radialDist2point(radialDist, LFargs, pixel);
 
-    sep = LFargs.baseline/(LFargs.N-1);
+    sep = LFargs.baseline/(LFargs.N-1)
+    LFargs.seperation
 
     fn = @(i,j) sqrt(P(3)^2 + (P(1) - (i-1)*sep).^2 + ...
                      (P(2) - (j-1)*sep).^2);

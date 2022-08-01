@@ -41,7 +41,7 @@ grid on
 
 
 % now get theoretical
-distGrid = getTheoreticalSurface (pixel, r, LFargs);
+distGrid = getTheoreticalSurface (pixel, P(3), LFargs);
 hold on
 surf(distGrid)
 

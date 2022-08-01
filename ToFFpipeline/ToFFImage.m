@@ -12,6 +12,8 @@ function [centreViewDistImg, debug] = ToFFImage (distLF, ampLF, LFargs, nvargs)
 
     centreViewDistImg = zeros(LFargs.size(3), LFargs.size(4));
 
+    dLFinterp = griddedInterpolant(distLF);
+
     if nvargs.useWbar
         w = waitbar(0,"starting ToFF");
         wCount = 0;
@@ -27,7 +29,7 @@ function [centreViewDistImg, debug] = ToFFImage (distLF, ampLF, LFargs, nvargs)
 
             pixel = [k;l];
 
-            [finalDist, ~] = combineSinglePixelField(distLF, LFargs, pixel);
+            [finalDist, ~] = combineSinglePixelField(dLFinterp, LFargs, pixel);
 
             centreViewDistImg(l,k) = finalDist;
 %             debug(l,k) = singleDebug;
