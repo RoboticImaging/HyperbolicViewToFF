@@ -7,7 +7,7 @@ function [grid] = getOtherViewIndexes (pixel, LFargs, Pz)
         Pz double
     end
 
-    % we have to use N-1 here since the linspace later counts endpoints!
+    % we have to use N here since the linspace later counts endpoints!
     TVSlope = -LFargs.K(1,1)*LFargs.baseline/(Pz*(LFargs.N));
     SUSlope = -LFargs.K(2,2)*LFargs.baseline/(Pz*(LFargs.N));
 
@@ -16,8 +16,8 @@ function [grid] = getOtherViewIndexes (pixel, LFargs, Pz)
 
     [ii,jj] = meshgrid(1:LFargs.N);
 
-    u = pixel(2);
     v = pixel(1);
+    u = pixel(2);
     [uu, vv] = meshgrid(u + UOffsetVec, v + VOffsetVec);
 
     grid = {jj(:), ii(:), vv(:), uu(:)};

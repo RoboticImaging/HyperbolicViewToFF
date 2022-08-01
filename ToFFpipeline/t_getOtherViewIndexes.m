@@ -3,14 +3,16 @@ clc
 close all
 
 
-pth = fullfile("..\data\results\mat\occlusions\");
+% pth = fullfile("..\data\results\mat\occlusions\");
+pth = fullfile("..\data\results\mat\small_N\");
 % pth = fullfile("..\data\results\mat\plastic_saturation_2\");
 
 [dLF, ampLF, LFargs] = readToFFarray(pth);
 
 
 % pixel = [94;152];
-pixel = [300;152];
+% pixel = [300;152];
+pixel = [113;148];
 
 r = dLF(LFargs.middleIdx, LFargs.middleIdx, pixel(2), pixel(1));
 P = radialDist2point(r, LFargs, pixel);
@@ -50,7 +52,21 @@ for iIdx = 1:length(stSubset)
         axis image
         set(gca,'YDir','reverse');
         ATplot(grid{3}(row, col), grid{4}(row, col),'rx') % correct way to plot is 3,4 and correct way to index is 4,3
-        pause
+%         pause
 
     end
 end
+
+
+% get the distGrid
+gridInterp = griddedInterpolant(dLF);
+distGrid = gridInterp(grid{2}(:), grid{1}(:), grid{4}(:), grid{3}(:));
+[xx,yy] = meshgrid(1:LFargs.N);
+figure
+plot3(xx(:), yy(:), distGrid(:), 'rx');
+xlabel('x')
+ylabel('y')
+
+
+
+
