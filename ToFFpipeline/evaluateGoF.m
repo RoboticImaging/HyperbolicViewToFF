@@ -7,4 +7,6 @@ function [rmse] = evaluateGoF (distGrid, surfFn, indexSubset)
     end
     assert(numel(distGrid) == numel(indexSubset));
 
+    
+
 end

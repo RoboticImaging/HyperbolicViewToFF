@@ -3,16 +3,19 @@ clc
 close all
 
 
-% pth = fullfile("..\data\results\mat\occlusions\");
-pth = fullfile("..\data\results\mat\small_N\");
+pth = fullfile("..\data\results\mat\occlusions\");
+pixel = [196; 159]; % middle of board
+
+% pth = fullfile("..\data\results\mat\small_N\");
+
 % pth = fullfile("..\data\results\mat\plastic_saturation_2\");
+% pixel = [190;112];
 
 [dLF, ampLF, LFargs] = readToFFarray(pth);
 
 
 % pixel = [94;152];
 % pixel = [300;152];
-pixel = [113;148];
 
 r = dLF(LFargs.middleIdx, LFargs.middleIdx, pixel(2), pixel(1));
 P = radialDist2point(r, LFargs, pixel);
