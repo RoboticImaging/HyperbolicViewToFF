@@ -61,12 +61,12 @@ end
 % get the distGrid
 gridInterp = griddedInterpolant(dLF);
 distGrid = gridInterp(grid{2}(:), grid{1}(:), grid{4}(:), grid{3}(:));
-[xx,yy] = meshgrid(1:LFargs.N);
+
 figure
-plot3(xx(:), yy(:), distGrid(:), 'rx');
+plot3(grid{1}(:), grid{2}(:), distGrid(:), 'rx');
 xlabel('x')
 ylabel('y')
-
+grid on
 
 
 
