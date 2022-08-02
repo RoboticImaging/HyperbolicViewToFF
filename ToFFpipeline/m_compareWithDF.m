@@ -20,11 +20,6 @@ figure
 imagesc(dImg)
 colorbar
 
-[dImgNoOcclusion, debugNone] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'none');
-
-figure
-imagesc(dImgNoOcclusion)
-colorbar
 
 % single img
 figure
