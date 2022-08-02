@@ -4,8 +4,8 @@ close all;
 
 pth = fullfile("..\data\results\mat\occlusions\");
 % pixel = [190;112]; % occlusion due to thin wire
-pixel = [200; 159]; % middle of board
-% pixel = [143; 97]; % back screen near edge of board
+% pixel = [200; 159]; % middle of board
+pixel = [143; 97]; % back screen near edge of board
 
 [dLF, ampLF, LFargs] = readToFFarray(pth);
 
@@ -42,17 +42,21 @@ title('Original distance grid')
 axis image
 colorbar
 
-opts = ["none", "activecontour", "lazysnapping"];
+opts = { {'method', 'none'},...
+         {'method', 'activecontour', 'contour', 'Chan-Vese'},...
+         {'method', 'activecontour', 'contour', 'edge'},...
+         {'method', 'threshold', 'threshold', -0.1}
+    };
 
 figure
 for i = 1:length(opts)
     subplot(1,length(opts),i);
     tic
-    newmask = rejectOcclusionOutliers(distGrid, 'method', opts(i));
+    newmask = rejectOcclusionOutliers(distGrid, opts{i}{:});
     t = toc;
     newmask = reshape(newmask, size(distGrid));
     imagesc(newmask)
-    title(sprintf("%s, %f s", opts(i), t))
+    title(sprintf("%s, %f s", opts{i}{2}, t))
     axis image
 end
 
@@ -68,15 +72,17 @@ figure
 for i = 1:length(opts)
     subplot(1,length(opts),i);
     tic
-    newmask = rejectOcclusionOutliers(distGrid - theoreticalGrid, 'method', opts(i));
+    newmask = rejectOcclusionOutliers(distGrid - theoreticalGrid, opts{i}{:});
     t = toc;
     newmask = reshape(newmask, size(distGrid));
     imagesc(newmask)
-    title(sprintf("%s, %f s", opts(i), t))
+    title(sprintf("%s, %f s", opts{i}{2}, t))
     axis image
 end
 
-% plotTheoreticalvsMeasured(theoreticalGrid, distGrid, rejectOcclusionOutliers(distGrid));
+
+plotTheoreticalvsMeasured(theoreticalGrid, distGrid, ...
+            rejectOcclusionOutliers(distGrid - theoreticalGrid, opts{4}{:}));
 
 
 

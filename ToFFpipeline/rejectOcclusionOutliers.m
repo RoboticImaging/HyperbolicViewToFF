@@ -3,12 +3,17 @@ function [indexSubset] = rejectOcclusionOutliers (distGrid, nvargs)
     arguments
         distGrid (:,:) double
         nvargs.method string = 'none'
+        nvargs.contour string % used for activecontour method
+        nvargs.threshold double
     end
 
     middleIndex = (size(distGrid,1) + 1)/2;
 
     if strcmp(nvargs.method, 'none')
         indexSubset = true(size(distGrid));
+    elseif strcmp(nvargs.method, 'threshold')
+        indexSubset = distGrid > nvargs.threshold;
+
     elseif strcmp(nvargs.method, 'activecontour')
         mask = zeros(size(distGrid));
         mask(2:end-2, 2:end-2) = 1;
