@@ -25,3 +25,28 @@ colorbar
 figure
 imagesc(dImgNoOcclusion)
 colorbar
+
+% single img
+figure
+imagesc(squeeze(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:)))
+
+
+%% DF
+% select point that is in middle of scene
+pixel = [200; 159];
+
+% calculate Pz
+r = dLF(LFargs.middleIdx, LFargs.middleIdx, pixel(2), pixel(1));
+P = radialDist2point(r, LFargs, pixel);
+
+% calculate slope
+slope = -LFargs.K(1,1)*LFargs.baseline/(P(3)*(LFargs.N));
+
+% shift and sum the LF
+ImgOut = LFFiltShiftSum(dLF, slope);
+ImgOut = ImgOut(:,:,1);
+
+figure
+imagesc(ImgOut)
+
+

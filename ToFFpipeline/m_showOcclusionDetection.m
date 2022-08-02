@@ -9,7 +9,7 @@ close all
 pth = fullfile("..\data\results\mat\occlusions\");
 
 point(1).pixel = [190;112]; % occlusion due to thin wire
-point(1).view = [-101,13];
+point(1).view = [-160,4];
 
 point(2).pixel = [200; 159]; % middle of board
 point(2).view = [-155, 13];
