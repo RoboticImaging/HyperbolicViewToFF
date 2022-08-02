@@ -4,7 +4,7 @@ function [grid] = getOtherViewIndexes (pixel, LFargs, Pz)
     arguments
         pixel (2,1) double
         LFargs 
-        Pz double
+        Pz (1,1) double
     end
 
     % we have to use N here since the linspace later counts endpoints!

@@ -6,13 +6,12 @@ function [centreViewDistImg, debug] = ToFFImage (distLF, ampLF, LFargs, nvargs)
         ampLF (:,:,:,:) double
         LFargs {}
 
-        nvargs.useOcclusionDetect = true
+        nvargs.occlusionMethod = 'none'
+        nvargs.contour = 'edge'
         nvargs.useWbar = true
     end
 
     centreViewDistImg = zeros(LFargs.size(3), LFargs.size(4));
-
-    dLFinterp = griddedInterpolant(distLF);
 
     if nvargs.useWbar
         w = waitbar(0,"starting ToFF");
@@ -26,13 +25,14 @@ function [centreViewDistImg, debug] = ToFFImage (distLF, ampLF, LFargs, nvargs)
                 w = waitbar(wCount/(LFargs.size(3)*LFargs.size(4)), w, "computing ToFF...");
                 wCount = wCount + 1;
             end
+%             fprintf("%d,%d\n",k,l);
 
-            pixel = [k;l];
+            pixel = [k; l];
 
-            [finalDist, ~] = combineSinglePixelField(dLFinterp, LFargs, pixel);
+            [finalDist, singleDebug] = combineSinglePixelField(distLF, LFargs, pixel);
 
             centreViewDistImg(l,k) = finalDist;
-%             debug(l,k) = singleDebug;
+            debug(l,k) = singleDebug;
         end
     end
 

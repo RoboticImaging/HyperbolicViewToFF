@@ -12,13 +12,13 @@ point(1).pixel = [190;112]; % occlusion due to thin wire
 point(1).view = [-101,13];
 
 point(2).pixel = [200; 159]; % middle of board
-point(2).view = [-194, 9];
+point(2).view = [-155, 13];
 
 point(3).pixel = [143; 97]; % back screen near edge of board
 point(3).view = [-194, 9];
 
 
-pointIdx = 3; %change this to select different point
+pointIdx = 1; %change this to select different point
 pixel = point(pointIdx).pixel;
 
 [dLF, ampLF, LFargs] = readToFFarray(pth);

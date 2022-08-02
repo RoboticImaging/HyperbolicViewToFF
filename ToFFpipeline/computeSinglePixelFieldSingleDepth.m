@@ -7,6 +7,7 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
 
         nvargs.occlusionMethod = 'none'
         nvargs.contour = 'edge'
+        nvargs.useOcclusionErrorThreshold = -0.1
     end
 
     % extract data
@@ -21,7 +22,8 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
     [indexSubsetSat] = rejectInvalidDataPts (dataGrid);
     indexSubsetSat = reshape(indexSubsetSat, [LFargs.N, LFargs.N]);
 
-    if min(dataGrid - theoreticalGrid,[],'all') < -0.1
+    % check if there is something that looks like it is occluding the scene
+    if min(dataGrid - theoreticalGrid,[],'all') < nvargs.useOcclusionErrorThreshold
         [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid,...
                                 'method', nvargs.occlusionMethod);
     else

@@ -11,7 +11,8 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
         nvargs.contour = 'edge'
     end
     
-    distanceLFinterp = griddedInterpolant(distLF);
+    distanceLFinterp = griddedInterpolant(distLF, 'linear', 'nearest');
+%     distanceLFinterp = griddedInterpolant(distLF,'nearest');
     
 
     % compute the initial Pz
@@ -25,7 +26,7 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
         % since the centre view isn't valid, do a coarse plane sweep and
         % choose the best Pz
         PzVals = linspace(0.3,1.5,5);
-        rmseCoarse = zeros(length(PzVals));
+        rmseCoarse = zeros(length(PzVals),1);
         for i = 1:length(PzVals)
             rmseCoarse(i) = computeSinglePixelFieldSingleDepth(distanceLFinterp, ...
                                  LFargs, pixel, PzVals(i));
@@ -38,7 +39,9 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
     nvargsCell = namedargs2cell(nvargs);
 
     % optimize over rmse
-    [Pz, finalErr] = fminsearch(@(Pz) computeSinglePixelFieldSingleDepth(distanceLFinterp, LFargs, pixel, Pz, nvargsCell{:}), initPz);
+    fnToOpt = @(Pz) computeSinglePixelFieldSingleDepth(distanceLFinterp, LFargs, pixel, Pz, nvargsCell{:});
+
+    [Pz, finalErr] = fminsearch(@(PzVec) arrayfun(fnToOpt, PzVec), initPz);
 
     P = Pz2point(Pz, LFargs, pixel);
 
