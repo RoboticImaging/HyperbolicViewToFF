@@ -22,12 +22,14 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
     [indexSubsetSat] = rejectInvalidDataPts (dataGrid);
     indexSubsetSat = reshape(indexSubsetSat, [LFargs.N, LFargs.N]);
 
+    isMiddleValid = rejectInvalidDataPts(dataGrid(LFargs.middleIdx,LFargs.middleIdx));
+
     % check if there is something that looks like it is occluding the scene
     if min(dataGrid - theoreticalGrid,[],'all') < nvargs.useOcclusionErrorThreshold
-        [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid,...
+        [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid, isMiddleValid,...
                                 'method', nvargs.occlusionMethod);
     else
-        [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid,...
+        [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid, isMiddleValid,...
                                 'method', 'none');
     end
     indexSubset = and(indexSubsetSat, indexSubsetOcc);

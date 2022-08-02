@@ -1,10 +1,11 @@
-function [indexSubset] = rejectOcclusionOutliers (distGrid, nvargs)
+function [indexSubset] = rejectOcclusionOutliers (distGrid, isMiddleValid, nvargs)
     % return a list of indices that are valid for curve fitting using segmentation on the grid data from other views
     arguments
         distGrid (:,:) double
+        isMiddleValid 
         nvargs.method string = 'none'
         nvargs.contour string % used for activecontour method
-        nvargs.threshold double
+        nvargs.threshold double = -0.05
     end
 
     middleIndex = (size(distGrid,1) + 1)/2;
@@ -13,6 +14,12 @@ function [indexSubset] = rejectOcclusionOutliers (distGrid, nvargs)
         indexSubset = true(size(distGrid));
     elseif strcmp(nvargs.method, 'threshold')
         indexSubset = distGrid > nvargs.threshold;
+
+        % if the middle index is a valid point then it shouldnt be
+        % thresholded out
+        if (indexSubset(middleIndex, middleIndex) == false) && isMiddleValid
+            indexSubset = true(size(distGrid));
+        end
 
     elseif strcmp(nvargs.method, 'activecontour')
         mask = zeros(size(distGrid));
