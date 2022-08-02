@@ -5,20 +5,48 @@ clear
 clc
 close all
 
-
+USE_PREDFINED_PIXELS = true;
 
 pth = fullfile("..\data\results\mat\occlusions\");
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
-tic
-[dImg, debug] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'threshold');
-% [dImg, debug] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'activecontour');
-toc
+% tic
+% [dImg, debug] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'threshold');
+% % [dImg, debug] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'activecontour');
+% toc
 
 
 % single img
-figure
+figure(1)
 imagesc(squeeze(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:)))
+hold on
+
+if USE_PREDFINED_PIXELS
+    samplePoints = [
+          195.5968  153.9035
+          240.1313   97.4825
+          127.1728  213.1316
+          139.8548  104.2193
+           35.4493   22.5351
+           ];
+else
+    [x,y] = ginput;
+    samplePoints = [x,y];
+end
+
+for pointIdx = 1:size(samplePoints,1)
+    pixel = round(samplePoints(pointIdx,:));
+    
+    figure(1)
+    plot(pixel(1), pixel(2), 'rx')
+    text(pixel(1), pixel(2), sprintf("  %d", pointIdx))
+
+    [finalDist, singleDebug] = combineSinglePixelField (dLF, LFargs, pixel, 'occlusionMethod','threshold');
+    plotTheoreticalvsMeasured(singleDebug.theoreticalGrid, singleDebug.distGrid, singleDebug.indexSubset)
+    title(sprintf("%d", pointIdx))
+end
+
+
 
 

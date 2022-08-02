@@ -10,7 +10,7 @@ pth = fullfile("..\data\results\mat\many_objects\");
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
 
-% select point that is in middle of scene
+% select point
 pixel = [65; 146];
 
 % calculate Pz
