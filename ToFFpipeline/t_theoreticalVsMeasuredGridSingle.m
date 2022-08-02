@@ -6,7 +6,7 @@ close all;
 % pixel = [190;112];
 
 pth = fullfile("..\data\results\mat\occlusions\");
-pixel = [196; 159]; % middle of board
+pixel = [197; 159]; % middle of board
 
 % pth = fullfile("..\data\results\mat\small_N\");
 
