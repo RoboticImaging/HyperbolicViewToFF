@@ -25,8 +25,8 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies)
     % formatting
     fp = getATfontParams();
     ap = getATaxisParams();
-    xlabel('x', fp{:})
-    ylabel('y', fp{:})
+    xlabel('y', fp{:})
+    ylabel('x', fp{:})
     zlabel('Distance [m]', fp{:})
     set(gca, ap{:})
     grid on

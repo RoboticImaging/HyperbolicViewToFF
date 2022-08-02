@@ -53,4 +53,5 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
     singleDebug.distGrid = dataGrid;
     singleDebug.theoreticalGrid = theoreticalGrid;
     singleDebug.indexSubset = indexSubset;
+    singleDebug.P = P;
 end
