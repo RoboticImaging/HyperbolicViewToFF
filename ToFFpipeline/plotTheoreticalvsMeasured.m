@@ -22,8 +22,10 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies)
     plot3(jj(~validIndicies), ii(~validIndicies), distGrid(~validIndicies), 'bx', LineWidth=1.2);
     surf(theoreticalGrid)
 
+    % formatting
     xlabel('x')
     ylabel('y')
+    zlabel('Distance [m]')
     grid on
 
 

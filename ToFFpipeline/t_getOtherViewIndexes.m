@@ -23,10 +23,10 @@ P = radialDist2point(r, LFargs, pixel);
 Pz = P(3);
 
 
-grid = getOtherViewIndexes (pixel, LFargs, Pz);
+sampleGrid = getOtherViewIndexes (pixel, LFargs, Pz);
 
 for row=1:4
-    grid{row} = reshape(grid{row},[LFargs.N,LFargs.N]);
+    sampleGrid{row} = reshape(sampleGrid{row},[LFargs.N,LFargs.N]);
 end
 
 figure
@@ -52,22 +52,22 @@ for iIdx = 1:length(stSubset)
         
 
         hold on
-        imagesc(squeeze(dLF(grid{2}(row,col), grid{1}(row,col), :, :)))
+        imagesc(squeeze(dLF(sampleGrid{2}(row,col), sampleGrid{1}(row,col), :, :)))
         axis image
         set(gca,'YDir','reverse');
-        ATplot(grid{3}(row, col), grid{4}(row, col),'rx') % correct way to plot is 3,4 and correct way to index is 4,3
+        ATplot(sampleGrid{3}(row, col), sampleGrid{4}(row, col),'rx') % correct way to plot is 3,4 and correct way to index is 4,3
 %         pause
 
     end
 end
 
 
-% get the distGrid
-gridInterp = griddedInterpolant(dLF);
-distGrid = gridInterp(grid{2}(:), grid{1}(:), grid{4}(:), grid{3}(:));
+% get the distsampleGrid 
+sampleGridInterp = griddedInterpolant(dLF);
+distsampleGrid = sampleGridInterp(sampleGrid{2}(:), sampleGrid{1}(:), sampleGrid{4}(:), sampleGrid{3}(:));
 
 figure
-plot3(grid{1}(:), grid{2}(:), distGrid(:), 'rx');
+plot3(sampleGrid{1}(:), sampleGrid{2}(:), distsampleGrid(:), 'rx');
 xlabel('x')
 ylabel('y')
 grid on
