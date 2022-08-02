@@ -5,13 +5,14 @@ close all;
 % pth = fullfile("..\data\results\mat\occlusions\");
 % pixel = [190;112];
 
-pth = fullfile("..\data\results\mat\occlusions\");
-pixel = [197; 159]; % middle of board
+% pth = fullfile("..\data\results\mat\occlusions\");
+% pixel = [200; 159]; % middle of board
 
 % pth = fullfile("..\data\results\mat\small_N\");
 
-% pth = fullfile("..\data\results\mat\plastic_saturation_2\");
-% pixel = [190;112];
+pth = fullfile("..\data\results\mat\plastic_saturation_2\");
+% pixel = [146;151];% saturated in centre view
+pixel = [150;146]; % wooden bird chest
 
 [dLF, ampLF, LFargs] = readToFFarray(pth);
 
@@ -35,5 +36,5 @@ distGrid = gridInterp(grid{2}(:), grid{1}(:), grid{4}(:), grid{3}(:));
 
 theoreticalGrid = getTheoreticalSurface (pixel, P(3), LFargs);
 
-plotTheoreticalvsMeasured(theoreticalGrid, distGrid)
+plotTheoreticalvsMeasured(theoreticalGrid, distGrid, rejectInvalidDataPts(distGrid));
 
