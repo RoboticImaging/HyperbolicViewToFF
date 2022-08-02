@@ -33,16 +33,7 @@ grid = getOtherViewIndexes (pixel, LFargs, Pz);
 gridInterp = griddedInterpolant(dLF);
 distGrid = gridInterp(grid{2}(:), grid{1}(:), grid{4}(:), grid{3}(:));
 
-figure
-plot3(grid{1}(:), grid{2}(:), distGrid(:), 'rx', LineWidth=1.2);
-xlabel('x')
-ylabel('y')
-grid on
+theoreticalGrid = getTheoreticalSurface (pixel, P(3), LFargs);
 
-
-% now get theoretical
-distGrid = getTheoreticalSurface (pixel, P(3), LFargs);
-hold on
-surf(distGrid)
-
+plotTheoreticalvsMeasured(theoreticalGrid, distGrid)
 

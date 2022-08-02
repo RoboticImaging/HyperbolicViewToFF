@@ -4,4 +4,5 @@ function [indexSubset] = rejectOcclusionOutliers (distGrid)
         distGrid (:,:) double
     end
 
+    indexSubset = true(size(distGrid));
 end

@@ -14,7 +14,9 @@ function [error] = computeSinglePixelFieldSingleDepth (dLFinterp, LFargs, pixel,
     theoreticalGrid = getTheoreticalSurface (pixel, Pz, LFargs);
 
     % get anti saturation mask
-    [indexSubset] = rejectInvalidDataPts (dataGrid);
+    [indexSubsetSat] = rejectInvalidDataPts (dataGrid);
+    [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid);
+    indexSubset = and(indexSubsetSat, indexSubsetOcc);
 
     % get Goodness of Fit
     error = evaluateGoF(dataGrid, theoreticalGrid, indexSubset);
