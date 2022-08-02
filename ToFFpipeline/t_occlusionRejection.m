@@ -52,7 +52,7 @@ figure
 for i = 1:length(opts)
     subplot(1,length(opts),i);
     tic
-    newmask = rejectOcclusionOutliers(distGrid, opts{i}{:});
+    newmask = rejectOcclusionOutliers(distGrid, true, opts{i}{:});
     t = toc;
     newmask = reshape(newmask, size(distGrid));
     imagesc(newmask)
@@ -72,7 +72,7 @@ figure
 for i = 1:length(opts)
     subplot(1,length(opts),i);
     tic
-    newmask = rejectOcclusionOutliers(distGrid - theoreticalGrid, opts{i}{:});
+    newmask = rejectOcclusionOutliers(distGrid - theoreticalGrid, true, opts{i}{:});
     t = toc;
     newmask = reshape(newmask, size(distGrid));
     imagesc(newmask)
@@ -82,7 +82,7 @@ end
 
 
 plotTheoreticalvsMeasured(theoreticalGrid, distGrid, ...
-            rejectOcclusionOutliers(distGrid - theoreticalGrid, opts{4}{:}));
+            rejectOcclusionOutliers(distGrid - theoreticalGrid, true, opts{4}{:}));
 
 
 

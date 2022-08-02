@@ -9,6 +9,7 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
         nvargs.contour = 'edge'
         nvargs.useOcclusionErrorThreshold = -0.1
     end
+    Pz
 
     % extract data
     grid = getOtherViewIndexes (pixel, LFargs, Pz);
@@ -22,16 +23,19 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
     [indexSubsetSat] = rejectInvalidDataPts (dataGrid);
     indexSubsetSat = reshape(indexSubsetSat, [LFargs.N, LFargs.N]);
 
-    isMiddleValid = rejectInvalidDataPts(dataGrid(LFargs.middleIdx,LFargs.middleIdx));
+    isMiddleValid = rejectInvalidDataPts(dataGrid(LFargs.middleIdx,LFargs.middleIdx))
 
+    distError = dataGrid - theoreticalGrid;
     % check if there is something that looks like it is occluding the scene
-    if min(dataGrid - theoreticalGrid,[],'all') < nvargs.useOcclusionErrorThreshold
+    if min(distError,[],'all') < nvargs.useOcclusionErrorThreshold
+%     if sum(distError < nvargs.useOcclusionErrorThreshold) > 1
         [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid, isMiddleValid,...
                                 'method', nvargs.occlusionMethod);
     else
         [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid, isMiddleValid,...
                                 'method', 'none');
     end
+    sum(indexSubsetOcc,'all')
     indexSubset = and(indexSubsetSat, indexSubsetOcc);
 
     % get Goodness of Fit

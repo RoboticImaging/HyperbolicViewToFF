@@ -17,6 +17,6 @@ function [distGrid] = getTheoreticalSurface (pixel, Pz, LFargs)
 
     [ii,jj] = meshgrid(1:LFargs.N);
 
-    distGrid = fn(ii,jj);
+    distGrid = fn(jj,ii);
 
 end

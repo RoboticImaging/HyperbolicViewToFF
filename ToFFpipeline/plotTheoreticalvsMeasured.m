@@ -17,9 +17,9 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies)
     [ii,jj] = meshgrid(1:N);
 
     figure
-    plot3(jj(validIndicies), ii(validIndicies), distGrid(validIndicies), 'rx', LineWidth=1.2);
+    plot3(ii(validIndicies), jj(validIndicies), distGrid(validIndicies), 'rx', LineWidth=1.2);
     hold on
-    plot3(jj(~validIndicies), ii(~validIndicies), distGrid(~validIndicies), 'bx', LineWidth=1.2);
+    plot3(ii(~validIndicies), jj(~validIndicies), distGrid(~validIndicies), 'bx', LineWidth=1.2);
     surf(theoreticalGrid)
 
     % formatting

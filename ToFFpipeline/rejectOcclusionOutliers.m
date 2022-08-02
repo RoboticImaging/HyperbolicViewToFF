@@ -5,7 +5,7 @@ function [indexSubset] = rejectOcclusionOutliers (distGrid, isMiddleValid, nvarg
         isMiddleValid 
         nvargs.method string = 'none'
         nvargs.contour string % used for activecontour method
-        nvargs.threshold double = -0.05
+        nvargs.threshold double = -0.1
     end
 
     middleIndex = (size(distGrid,1) + 1)/2;
