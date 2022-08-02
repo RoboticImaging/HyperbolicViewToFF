@@ -8,6 +8,8 @@ close all
 
 
 pth = fullfile("..\data\results\mat\occlusions\");
+% pth = fullfile("..\data\results\mat\gray_head\");
+
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
@@ -16,14 +18,19 @@ tic
 % [dImg, debug] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'activecontour');
 toc
 
+clim = [min(dImg,[],'all'), max(dImg,[],'all')];
+
 figure
-imagesc(dImg)
+imagesc(dImg, clim)
+title('Ours')
 colorbar
+
 
 
 % single img
 figure
-imagesc(squeeze(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:)))
+imagesc(squeeze(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:)), clim)
+title('Single')
 
 
 %% DF
@@ -42,6 +49,6 @@ ImgOut = LFFiltShiftSum(dLF, slope);
 ImgOut = ImgOut(:,:,1);
 
 figure
-imagesc(ImgOut)
+imagesc(ImgOut, clim)
 
 
