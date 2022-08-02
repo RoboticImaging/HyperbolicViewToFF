@@ -23,9 +23,12 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies)
     surf(theoreticalGrid)
 
     % formatting
-    xlabel('x')
-    ylabel('y')
-    zlabel('Distance [m]')
+    fp = getATfontParams();
+    ap = getATaxisParams();
+    xlabel('x', fp{:})
+    ylabel('y', fp{:})
+    zlabel('Distance [m]', fp{:})
+    set(gca, ap{:})
     grid on
 
 

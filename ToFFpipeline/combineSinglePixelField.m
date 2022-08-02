@@ -7,7 +7,8 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
 
         pixel (2,1) double
 
-        nvargs.useOcclusionDetect = true
+        nvargs.occlusionMethod = 'none'
+        nvargs.contour = 'edge'
     end
     
     distanceLFinterp = griddedInterpolant(distLF);
@@ -33,12 +34,20 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
         initPz = PzVals(minIdx);
     end
 
+    % need to convert to cell to pass it down
+    nvargsCell = namedargs2cell(nvargs);
+
     % optimize over rmse
-    computeSinglePixelFieldSingleDepth();
+    [Pz, finalErr] = fminsearch(@(Pz) computeSinglePixelFieldSingleDepth(distanceLFinterp, LFargs, pixel, Pz, nvargsCell{:}), initPz);
+
+    P = Pz2point(Pz, LFargs, pixel);
 
     % set return values
-    finalDist = 0;
-    singleDebug.test = 0;
+    finalDist = norm(P);
 
-
+    singleDebug.finalErr = finalErr;
+    [~, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFieldSingleDepth(distanceLFinterp, LFargs, pixel, Pz, nvargsCell{:});
+    singleDebug.distGrid = dataGrid;
+    singleDebug.theoreticalGrid = theoreticalGrid;
+    singleDebug.indexSubset = indexSubset;
 end

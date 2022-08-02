@@ -8,5 +8,5 @@ function [rmse] = evaluateGoF (distGrid, surfGrid, indexSubset)
     assert(numel(distGrid) == numel(indexSubset));
     assert(numel(surfGrid) == numel(indexSubset));
 
-    rmse = rms(distGrid(indexSubset) - surfGrid(indexSubset));
+    rmse = rms(indexSubset.*(distGrid - surfGrid), 'all');
 end
