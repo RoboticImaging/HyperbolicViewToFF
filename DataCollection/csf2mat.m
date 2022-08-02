@@ -4,9 +4,11 @@ clc;
 
 N = 15; 
 
-folderName = 'gray_head';
-dataFolder = fullfile("../data/results/csf",folderName);
-resultsFolder = fullfile("../data/results/mat",folderName);
+folderName = 'plastic_saturation_2';
+resultsLoc = "../data/results";
+% resultsLoc = "G:\ACFR Winter storage\NewResults\";
+dataFolder = fullfile(resultsLoc,"csf",folderName);
+resultsFolder = fullfile(resultsLoc,"mat",folderName);
 if ~exist(resultsFolder, "dir")
     mkdir(resultsFolder)
 end

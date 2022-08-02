@@ -4,6 +4,8 @@ close all
 
 
 % pth = fullfile("..\data\results\mat\occlusions\");
+% pth = fullfile("..\data\results\rmat\occlusions\");
+% pth = fullfile("..\data\results\mat\plastic_saturation_2\");
 % pixel = [196; 159]; % middle of board
 
 % pth = fullfile("..\data\results\mat\small_N\");
