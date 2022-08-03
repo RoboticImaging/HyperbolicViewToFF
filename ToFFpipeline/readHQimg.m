@@ -7,13 +7,13 @@ function [distImg, ampImg] = readHQimg(path)
     LFargs = readLFargs(path);
 
     
-    fileName = fullfile(path,"1-1_amplitude.mat");
+    fileName = fullfile(path,"centerHQ_amplitude.mat");
     temp = load(fileName);
 
     ampImg = temp.amp;
 
     
-    fileName = fullfile(path,"1-1_phase.mat");
+    fileName = fullfile(path,"centerHQ_phase.mat");
     temp = load(fileName);
 
     phaseImg = temp.phi;

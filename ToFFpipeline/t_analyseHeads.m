@@ -29,7 +29,7 @@ colorbar
 
 % single img
 figure
-singleDImg = squeeze(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:));
+singleDImg = squeeze(dLF(LFargs. middleIdx,LFargs.middleIdx,:,:));
 imagesc(singleDImg, clim)
 title('Single')
 

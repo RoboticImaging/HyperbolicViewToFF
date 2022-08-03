@@ -3,16 +3,16 @@ clc
 close all
 
 
-% pth = fullfile("..\data\results\mat\occlusions\");
-% pth = fullfile("..\data\results\rmat\occlusions\");
+pth = fullfile("..\data\results\mat\occlusions\");
+pixel = [139;125];
+
 % pth = fullfile("..\data\results\mat\plastic_saturation_2\");
 % pixel = [196; 159]; % middle of board
 
 % pth = fullfile("..\data\results\mat\small_N\");
 
-pth = fullfile("..\data\results\mat\plastic_saturation_2\");
-% pixel = [190;112];
-pixel = [150;146]; % wooden bird chest
+% pth = fullfile("..\data\results\mat\plastic_saturation_2\");
+% pixel = [150;146]; % wooden bird chest
 
 [dLF, ampLF, LFargs] = readToFFarray(pth);
 
