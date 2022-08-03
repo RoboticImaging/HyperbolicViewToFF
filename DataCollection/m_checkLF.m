@@ -4,14 +4,12 @@ close all;
 
 addpath('../ToFFpipeline/')
 
-N = 15;
 
 baseDir = "../data/results/mat";
 
-pathToMat = fullfile(baseDir, "gray_head");
+pathToMat = fullfile(baseDir, "testing_N_3");
 
-cameraParams = load("cameraParams_july_2022.mat","cameraParams_july_2022");
-[phaseLF,ampLF] = readToFF(pathToMat,N, cameraParams);
+[dLF, ampLF, LFargs] = readToFFarray(pathToMat);
 
 
-LFDispLawnmower(phaseLF)
+LFDispLawnmower(dLF)

@@ -16,6 +16,7 @@ baseline = 300/1000; % mm
 assert(baseline>0);
 
 N = 15; assert(N>1);
+% N = 3; assert(N>1);
 % N = 5; assert(N>1);
 
 seperation = baseline/(N-1);
@@ -80,9 +81,9 @@ pause() % make sure everything is in right position
 
 %% prepare results location
 
-saveTarget = "../data/results/csf/black_shiny_head";
+saveTarget = "../data/results/csf/refraction_and_reflection";
 
-sceneDescription = "Black head with glossy finish";
+sceneDescription = "challenging scene with refraction and reflection";
 
 
 numFrames = 2; % The number of frames to capture 
