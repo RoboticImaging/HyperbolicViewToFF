@@ -1,10 +1,12 @@
-function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies)
+function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies, nvargs)
     % plots surface and crosses of actual measurement
     % optional add for different colours to show occlusion detection working
     arguments
         theoreticalGrid (:,:) double
         distGrid (:,:) double
         validIndicies logical = []
+
+        nvargs.alpha = 0.4
     end
     
     N = size(theoreticalGrid,1);
@@ -21,6 +23,7 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies)
     hold on
     plot3(ii(~validIndicies), jj(~validIndicies), distGrid(~validIndicies), 'bx', LineWidth=1.2);
     surf(theoreticalGrid)
+    alpha(nvargs.alpha)
 
     % formatting
     fp = getATfontParams();
