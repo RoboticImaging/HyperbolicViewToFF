@@ -7,7 +7,8 @@ clc
 close all
 
 
-pth = fullfile("..\data\results\mat\occlusions\");
+pth = fullfile("..\data\results\mat\plastic_saturation_2\");
+% pth = fullfile("..\data\results\mat\occlusions\");
 % pth = fullfile("..\data\results\mat\gray_head\");
 
 

@@ -39,5 +39,8 @@ function [centreViewDistImg, debug] = ToFFImage (distLF, ampLF, LFargs, useWbar,
             debug(l,k) = singleDebug;
         end
     end
+    if useWbar
+        close(w)
+    end
 
 end
