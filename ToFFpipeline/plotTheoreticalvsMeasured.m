@@ -18,7 +18,6 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies, nva
 
     [ii,jj] = meshgrid(1:N);
 
-    figure
     plot3(ii(validIndicies), jj(validIndicies), distGrid(validIndicies), 'rx', LineWidth=1.2);
     hold on
     plot3(ii(~validIndicies), jj(~validIndicies), distGrid(~validIndicies), 'bx', LineWidth=1.2);
@@ -26,7 +25,7 @@ function plotTheoreticalvsMeasured(theoreticalGrid, distGrid, validIndicies, nva
     alpha(nvargs.alpha)
 
     % formatting
-    fp = getATfontParams();
+    fp = getFontParams();
     ap = getATaxisParams();
     xlabel('y', fp{:})
     ylabel('x', fp{:})
