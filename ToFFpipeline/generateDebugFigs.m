@@ -1,4 +1,4 @@
-function generateDebugFigs(debug, LFargs)
+function generateDebugFigs(debug, LFargs, rmseClim)
     % takes a debug struct array from ToFFImage and produces some figures
     nPts = zeros(LFargs.size(3), LFargs.size(4));
 
@@ -9,7 +9,16 @@ function generateDebugFigs(debug, LFargs)
     end
     figure
     imagesc(nPts/LFargs.N^2, [0,1]);
-    colorbar;
+    axis image
+    axis off
+
+    fp = getFontParams();
+    ap = getATaxisParams();
+
+    set(gca, ap{:})
+    h = colorbar;
+    set(h, ap{:})
+    ylabel(h, 'Proportion of Points Used [ ]', fp{:})
 
     rmse = zeros(LFargs.size(3), LFargs.size(4));
 
@@ -19,6 +28,11 @@ function generateDebugFigs(debug, LFargs)
         end
     end
     figure
-    imagesc(rmse);
-    colorbar;
+    imagesc(rmse, rmseClim);
+    set(gca, ap{:})
+    h = colorbar;
+    set(h, ap{:})
+    axis image
+    axis off
+    ylabel(h, 'RMSE [m]', fp{:})
 end

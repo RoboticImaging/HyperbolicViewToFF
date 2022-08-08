@@ -38,16 +38,8 @@ title('Single')
 % select point that is in middle of scene
 pixel = [200; 159];
 
-% calculate Pz
-r = dLF(LFargs.middleIdx, LFargs.middleIdx, pixel(2), pixel(1));
-P = radialDist2point(r, LFargs, pixel);
 
-% calculate slope
-slope = -LFargs.K(1,1)*LFargs.baseline/(P(3)*(LFargs.N));
-
-% shift and sum the LF
-ImgOut = LFFiltShiftSum(dLF, slope);
-ImgOut = ImgOut(:,:,1);
+[ImgOut] = DepthFieldImage (distLF, depth,LFargs, pixel);
 
 figure
 imagesc(ImgOut, clim)
