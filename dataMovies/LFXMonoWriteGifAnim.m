@@ -31,10 +31,13 @@ RotRad = TCent.*PathRadius_percent/100;
 map = 256;
 WriteMode = 'overwrite';
 
+
+dLFmax = max(LF,[],"all");
+
 FirstPass = true;
 for( t = 1:NFrames )
-    TVal = TCent + RotRad(2) * cos( 2*pi*t/NFrames );
-    SVal = SCent + RotRad(1) * sin( 2*pi*t/NFrames );
+    TVal = TCent + RotRad * cos( 2*pi*t/NFrames );
+    SVal = SCent + RotRad * sin( 2*pi*t/NFrames );
     
     SIdx = round(SVal);
     TIdx = round(TVal);
@@ -43,13 +46,16 @@ for( t = 1:NFrames )
 	
 	CurFrame = imresize(CurFrame,ResizeRatio); 
     
-    [im,map] = rgb2ind(CurFrame, 256, 'nodither');
+%     [im,map] = rgb2ind(CurFrame, 256, 'nodither');
+    im = CurFrame/dLFmax;
     if( FirstPass )
-        imwrite(im,map,FName,'gif', 'Loopcount',inf, 'DelayTime',DelayTime, 'WriteMode',WriteMode);
+%         imwrite(im,map,FName,'gif', 'Loopcount',inf, 'DelayTime',DelayTime, 'WriteMode',WriteMode);
+        imwrite(CurFrame,FName,'gif', 'Loopcount',inf, 'DelayTime',DelayTime, 'WriteMode',WriteMode);
         WriteMode = 'append';
         FirstPass = false;
     else
-        imwrite(im,map,FName,'gif', 'DelayTime',DelayTime, 'WriteMode',WriteMode);
+%         imwrite(im,map,FName,'gif', 'DelayTime',DelayTime, 'WriteMode',WriteMode);
+        imwrite(CurFrame,FName,'gif', 'DelayTime',DelayTime, 'WriteMode',WriteMode);
     end
     
     fprintf('.')
