@@ -20,44 +20,133 @@ clim = [min(dImg,[],'all'), max(dImg,[],'all')];
 
 [dImgNoOcclusion, debugNone] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'none');
 
+%% surfaces
+pixel = [181; 84]; % back screen near edge of board
+surfView = [-193, 9];
+
+[~, singleDebugNone] = combineSinglePixelField (dLF, LFargs, pixel, 'occlusionMethod','none');
+[~, singleDebugThresh] = combineSinglePixelField (dLF, LFargs, pixel, 'occlusionMethod','threshold');
+
+%% debug figs
+
+[nPtsNone, rmseNone] = generateDebugFigs(debugNone, LFargs, rmseClim, false);
+[nPtsThresh, rmseThresh] = generateDebugFigs(debug, LFargs, rmseClim, false);
+nPtsClim = [0,1];
+rmseClim = [0,prctile(rmseNone, 99,'all')];
 
 %% plotting
-figure(1)
-plotDepthImg(dImg,clim)
 
-figure(2)
-plotDepthImg(dImgNoOcclusion,clim)
+% 1st column is naive, 2nd is ours
+% rows:
+% dist img (with colorbar)
+% surfaces
+% nPts
+% rmse
 
-% single img
-figure(3)
-plotDepthImg(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:),clim)
 
-% debug images
-rmse = zeros(LFargs.size(3), LFargs.size(4));
-for k = 1:LFargs.size(3)
-    for l = 1:LFargs.size(4)
-        rmse(k,l) = evaluateGoF (debugNone(k,l).distGrid, debugNone(k,l).theoreticalGrid, debugNone(k,l).indexSubset);
-    end
-end
-rmseClim = [0,prctile(rmse, 99,'all')];
-generateDebugFigs(debug, LFargs,rmseClim) % generates fig 4,5
-generateDebugFigs(debugNone, LFargs,rmseClim) % generates fig 6,7
+fp = getFontParams();
+ap = getATaxisParams();
+
+fig = figure('Position',[488.0000  131.0000  380.6000  631.0000]);
+
+
+sv = 0.08;
+mr = 0.2;
+
+ax(1) = subaxis(4,2,1, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotDepthImg(dImgNoOcclusion, clim, 'useCbar', false)
+hold on
+plot(pixel(1), pixel(2),'kx', LineWidth=1.2, MarkerSize=10)
+
+
+ax(2) = subaxis(4,2,2, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotDepthImg(dImg, clim, 'useCbar', false)
+hold on
+plot(pixel(1), pixel(2),'kx', LineWidth=1.2, MarkerSize=10)
+
+
+
+ax(3) = subaxis(4,2,3, 'sv',sv , 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotTheoreticalvsMeasured(singleDebugNone.theoreticalGrid, singleDebugNone.distGrid, singleDebugNone.indexSubset)
+view(surfView)
+
+ax(4) = subaxis(4,2,4, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotTheoreticalvsMeasured(singleDebugThresh.theoreticalGrid, singleDebugThresh.distGrid, singleDebugThresh.indexSubset)
+view(surfView)
+zlabel('')
+
+ax(5) = subaxis(4,2,5, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotDepthImg(nPtsNone/(LFargs.N^2), nPtsClim, 'useCbar', false)
+
+ax(6) = subaxis(4,2,6, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotDepthImg(nPtsThresh/(LFargs.N^2), nPtsClim, 'useCbar', false)
+
+ax(7) = subaxis(4,2,7, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotDepthImg(rmseNone, rmseClim, 'useCbar', false)
+
+ax(8) = subaxis(4,2,8, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+plotDepthImg(rmseThresh, rmseClim, 'useCbar', false)
+
+
+% bar for row 1
+h = axes(fig,'visible','off');
+c1 = colorbar(h,'Position',[(ax(2).Position(1) + ax(2).Position(3) + 0.01) ax(2).Position(2) 0.022 ax(2).Position(4)]);  % attach colorbar to h
+caxis(h, clim);    
+set(c1, ap{:})
+ylabel(c1, 'Distance [m]', fp{:})
+
+% bar for row 3
+h = axes(fig,'visible','off');
+c2 = colorbar(h,'Position',[(ax(6).Position(1) + ax(6).Position(3) + 0.01) ax(6).Position(2) 0.022 ax(6).Position(4)]);  % attach colorbar to h
+caxis(h, nPtsClim);    
+set(c2, ap{:})
+ylabel(c2, 'Prop. View Used', fp{:})
+
+% bar for row 4
+h = axes(fig,'visible','off');
+c3 = colorbar(h,'Position',[(ax(8).Position(1) + ax(8).Position(3) + 0.01) ax(8).Position(2) 0.022 ax(8).Position(4)]);  % attach colorbar to h
+caxis(h, rmseClim);    
+set(c3, ap{:})
+ylabel(c3, 'RMSE [m]', fp{:})
+
+% figure(1)
+% plotDepthImg(dImg,clim)
+% 
+% figure(2)
+% plotDepthImg(dImgNoOcclusion,clim)
+% 
+% % single img
+% figure(3)
+% plotDepthImg(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:),clim)
+% 
+% % debug images
+% rmse = zeros(LFargs.size(3), LFargs.size(4));
+% for k = 1:LFargs.size(3)
+%     for l = 1:LFargs.size(4)
+%         rmse(k,l) = evaluateGoF (debugNone(k,l).distGrid, debugNone(k,l).theoreticalGrid, debugNone(k,l).indexSubset);
+%     end
+% end
+% rmseClim = [0,prctile(rmse, 99,'all')];
+% generateDebugFigs(debug, LFargs,rmseClim) % generates fig 4,5
+% generateDebugFigs(debugNone, LFargs,rmseClim) % generates fig 6,7
 
 %% saving
 
 savePath = '../figs/occlusionDetection/';
 
-figSaves = [
-    "dimgOcclusionAware",...
-    "dimgNoOcc",...
-    "singleImg",...
-    "debugNpts",...
-    "debugrmse",...
-    "debugNoneNpts",...
-    "debugNoneRmse"
-    ];
+save2pdf(gcf, fullfile(savePath, 'occlusionDetectCompare'))
 
-for i = 1:length(figSaves)
-    figure(i)
-    save2pdf(gcf, fullfile(savePath, sprintf("%s.pdf", figSaves(i))))
-end
+% figSaves = [
+%     "dimgOcclusionAware",...
+%     "dimgNoOcc",...
+%     "singleImg",...
+%     "debugNpts",...
+%     "debugrmse",...
+%     "debugNoneNpts",...
+%     "debugNoneRmse"
+%     ];
+% 
+% for i = 1:length(figSaves)
+%     figure(i)
+%     save2pdf(gcf, fullfile(savePath, sprintf("%s.pdf", figSaves(i))))
+% end
