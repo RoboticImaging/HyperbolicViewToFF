@@ -12,7 +12,7 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
         nvargs.threshold = -0.05
     end
     
-    distanceLFinterp = griddedInterpolant(distLF, 'linear', 'nearest');
+    distanceLFinterp = griddedInterpolant(distLF, 'linear', 'none');
 %     distanceLFinterp = griddedInterpolant(distLF,'nearest');
     
 

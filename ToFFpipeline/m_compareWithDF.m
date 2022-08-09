@@ -9,7 +9,8 @@ close all
 
 % pth = fullfile("..\data\results\mat\plastic_saturation_2\");
 % pth = fullfile("..\data\results\mat\occlusions\");
-pth = fullfile("..\data\results\mat\gray_head\");
+% pth = fullfile("..\data\results\mat\gray_head\");
+pth = fullfile("..\data\results\mat\many_objects\");
 
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
@@ -46,7 +47,7 @@ figure
 imagesc(ImgOut, clim)
 
 
-%% zoomed imgs for head+
+%% zoomed imgs for head
 headLim = [0.77,0.97];
 kLim = 100:143;
 lLim = 95:180;
@@ -55,14 +56,6 @@ ap = getATaxisParams();
 
 figure
 subplot(131)
-imagesc(dImg(lLim,kLim), headLim)
-title('Ours')
-colorbar
-axis image
-axis off
-set(gca, ap{:})
-
-subplot(132)
 imagesc(singleDImg(lLim,kLim), headLim)
 title('Single')
 colorbar
@@ -70,9 +63,17 @@ axis image
 axis off
 set(gca, ap{:})
 
-subplot(133)
+subplot(132)
 imagesc(ImgOut(lLim,kLim), headLim)
 title('DF')
+colorbar
+axis image
+axis off
+set(gca, ap{:})
+
+subplot(133)
+imagesc(dImg(lLim,kLim), headLim)
+title('Ours')
 h = colorbar;
 axis image
 axis off
@@ -84,7 +85,6 @@ ylabel(h, 'Distance [m]', fp{:})
 set(gcf,'Position',[488.0000  354.6000  730.2000  407.4000])
 
 
-savePath = '../figs/EPI/';
+savePath = '../figs/compareWithDF/';
 
-figure(1)
-save2pdf(gcf, fullfile(savePath, 'centreView.pdf'))
+save2pdf(gcf, fullfile(savePath, 'compareWithDF.pdf'))

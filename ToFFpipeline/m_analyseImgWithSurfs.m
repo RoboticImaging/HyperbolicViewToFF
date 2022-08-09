@@ -7,10 +7,11 @@ close all
 
 %% generate the figures
 
-USE_PREDFINED_PIXELS = 1;
+USE_PREDFINED_PIXELS = 0;
 USE_PIPELINE_IMAGE = 0; % change to false for quicker testing
 
-pth = fullfile("..\data\results\mat\occlusions\");
+% pth = fullfile("..\data\results\mat\occlusions\");
+pth = fullfile("..\data\results\mat\\many_objects\");
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
