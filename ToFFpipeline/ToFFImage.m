@@ -10,6 +10,7 @@ function [centreViewDistImg, debug] = ToFFImage (distLF, ampLF, LFargs, useWbar,
 
         nvargs.occlusionMethod = 'none'
         nvargs.contour = 'edge'
+        nvargs.threshold = -0.05
     end
     
     % need to convert to cell to pass it down

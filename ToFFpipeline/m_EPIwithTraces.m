@@ -75,14 +75,14 @@ set(gcf,'Position', [300   300  0.3*figWidth figHeight])
 
 figure(4)
 horizEPITrace = horizEPI(:, pixel(1));
-plot(horizEPITrace, 'bx', LineWidth=1.5)
+plot(horizEPITrace, 'rx', LineWidth=1.5)
 hold on
 P = singleDebug.P;
 sep = LFargs.seperation;
 fn = @(i,j) sqrt(P(3)^2 + (P(1) - (i-1)*sep).^2 + ...
                      (P(2) - (j-1)*sep).^2);
 iVals = 1:LFargs.N;
-plot(iVals, fn(iVals, LFargs.middleIdx),'r', 'LineWidth',2)
+plot(iVals, fn(iVals, LFargs.middleIdx),'b', 'LineWidth',2)
 
 xlabel("i", fp{:})
 ylabel("Distance [m]", fp{:})
@@ -93,7 +93,7 @@ set(gcf, 'Position', [488.0000  587.8000  227.8000  174.2000]);
 
 figure(5)
 vertEPITrace = vertEPI(pixel(2),:);
-plot(vertEPITrace, 'bx', LineWidth=1.5)
+plot(vertEPITrace, 'rx', LineWidth=1.5)
 hold on
 xlabel("j", fp{:})
 ylabel("Distance [m]", fp{:})
@@ -101,7 +101,7 @@ ap = getATaxisParams();
 set(gca, ap{:})
 set(gcf, 'Position', [488.0000  587.8000  227.8000  174.2000]);
 jVals = 1:LFargs.N;
-plot(jVals, fn(LFargs.middleIdx, iVals),'r', 'LineWidth',2)
+plot(jVals, fn(LFargs.middleIdx, iVals),'b', 'LineWidth',2)
 
 %% save the figures
 
