@@ -30,7 +30,7 @@ clim = Pz + 0.03*[-1,1];
 
 
 imgsToAnalyse = {singleImg, HQdistImg, ToFFimg, DFimg};
-
+names = ["single", "N^2", "ToFF", "DF"];
 
 figure
 for i = 1:length(imgsToAnalyse)
@@ -40,6 +40,8 @@ for i = 1:length(imgsToAnalyse)
 
     imCropped = imgsToAnalyse{i}(lVals,kVals);
     rms(imCropped - Pz,'all')
+
+    title(names(i));
 end
 
 figure

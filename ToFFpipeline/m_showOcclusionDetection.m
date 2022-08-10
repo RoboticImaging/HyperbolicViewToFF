@@ -29,10 +29,10 @@ surfView = [-193, 9];
 
 %% debug figs
 
-[nPtsNone, rmseNone] = generateDebugFigs(debugNone, LFargs, rmseClim, false);
-[nPtsThresh, rmseThresh] = generateDebugFigs(debug, LFargs, rmseClim, false);
-nPtsClim = [0,1];
+[nPtsNone, rmseNone] = generateDebugFigs(debugNone, LFargs, [0,1], false);
+[nPtsThresh, rmseThresh] = generateDebugFigs(debug, LFargs, [0,1], false);
 rmseClim = [0,prctile(rmseNone, 99,'all')];
+nPtsClim = [0,1];
 
 %% plotting
 
@@ -58,19 +58,22 @@ plotDepthImg(dImgNoOcclusion, clim, 'useCbar', false)
 hold on
 plot(pixel(1), pixel(2),'kx', LineWidth=1.2, MarkerSize=10)
 
+title('Naive', fp{:})
+
 
 ax(2) = subaxis(4,2,2, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
 plotDepthImg(dImg, clim, 'useCbar', false)
 hold on
 plot(pixel(1), pixel(2),'kx', LineWidth=1.2, MarkerSize=10)
 
+title('Occlusion Aware', fp{:})
 
 
-ax(3) = subaxis(4,2,3, 'sv',sv , 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+ax(3) = subaxis(4,2,3, 'sv',sv , 'sh', 0.01,'MarginLeft',.15,'MarginRight',0.12, 'PaddingRight',0.05);
 plotTheoreticalvsMeasured(singleDebugNone.theoreticalGrid, singleDebugNone.distGrid, singleDebugNone.indexSubset)
 view(surfView)
 
-ax(4) = subaxis(4,2,4, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',mr);
+ax(4) = subaxis(4,2,4, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',0.12, 'PaddingLeft',0);
 plotTheoreticalvsMeasured(singleDebugThresh.theoreticalGrid, singleDebugThresh.distGrid, singleDebugThresh.indexSubset)
 view(surfView)
 zlabel('')
@@ -100,14 +103,38 @@ h = axes(fig,'visible','off');
 c2 = colorbar(h,'Position',[(ax(6).Position(1) + ax(6).Position(3) + 0.01) ax(6).Position(2) 0.022 ax(6).Position(4)]);  % attach colorbar to h
 caxis(h, nPtsClim);    
 set(c2, ap{:})
-ylabel(c2, 'Prop. View Used', fp{:})
+% ylabel(c2, 'Views Used', fp{:})
 
 % bar for row 4
 h = axes(fig,'visible','off');
 c3 = colorbar(h,'Position',[(ax(8).Position(1) + ax(8).Position(3) + 0.01) ax(8).Position(2) 0.022 ax(8).Position(4)]);  % attach colorbar to h
 caxis(h, rmseClim);    
 set(c3, ap{:})
-ylabel(c3, 'RMSE [m]', fp{:})
+% ylabel(c3, 'RMSE [m]', fp{:})
+
+% text below plots
+fp{2} = 12;
+gcf
+
+row = 1;
+ax(1).Position(1)
+% textX = (ax(1).Position(1) + ax(1).Position(3) + ax(2).Position(1))/2;
+textX = ax(1).Position(1) + ax(1).Position(3);
+
+offsetY = 0.05;
+txtOpts = ["Units","normalized", "HorizontalAlignment","center","VerticalAlignment","middle", "edgeColor","none"];
+
+
+subtitles = ["ToFF image", "Fit at occlusion", "Prop. views used","RMSE"];
+
+for i = 1:4
+    textY = ax(2*i).Position(2)- offsetY;
+%     text(textX,textY,subtitles(i),txtOpts{:}, fp{:})
+    annotation('textbox', [textX-0.5/2, textY, 0.5, 0], 'string', subtitles(i), txtOpts{:}, fp{:})
+end
+
+
+
 
 % figure(1)
 % plotDepthImg(dImg,clim)
