@@ -69,11 +69,11 @@ plot(pixel(1), pixel(2),'kx', LineWidth=1.2, MarkerSize=10)
 title('Occlusion Aware', fp{:})
 
 
-ax(3) = subaxis(4,2,3, 'sv',sv , 'sh', 0.01,'MarginLeft',.15,'MarginRight',0.12, 'PaddingRight',0.05);
+ax(3) = subaxis(4,2,3, 'sv',sv , 'sh', 0.01,'MarginLeft',.15,'MarginRight',0.12);
 plotTheoreticalvsMeasured(singleDebugNone.theoreticalGrid, singleDebugNone.distGrid, singleDebugNone.indexSubset)
 view(surfView)
 
-ax(4) = subaxis(4,2,4, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',0.12, 'PaddingLeft',0);
+ax(4) = subaxis(4,2,4, 'sv',sv, 'sh', 0.01,'MarginLeft',.15,'MarginRight',0.12);
 plotTheoreticalvsMeasured(singleDebugThresh.theoreticalGrid, singleDebugThresh.distGrid, singleDebugThresh.indexSubset)
 view(surfView)
 zlabel('')
@@ -114,7 +114,6 @@ set(c3, ap{:})
 
 % text below plots
 fp{2} = 12;
-gcf
 
 row = 1;
 ax(1).Position(1)
@@ -125,7 +124,7 @@ offsetY = 0.05;
 txtOpts = ["Units","normalized", "HorizontalAlignment","center","VerticalAlignment","middle", "edgeColor","none"];
 
 
-subtitles = ["ToFF image", "Fit at occlusion", "Prop. views used","RMSE"];
+subtitles = ["ToFF image", "Fit at occlusion", "Prop. views used","RMSE [m]"];
 
 for i = 1:4
     textY = ax(2*i).Position(2)- offsetY;

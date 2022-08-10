@@ -9,6 +9,8 @@ pth = fullfile("..\data\results\mat\many_objects\");
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
+hcolor = 'm';
+vcolor = 'g';
 
 % select point
 % pixel = [65; 146];
@@ -28,7 +30,8 @@ dLFshifted = squeeze(dLFshifted(:,:,:,:,1));
 
 % dLF has indicies (j,i,l,k)
 
-clim = [min(dLF,[],'all'), max(dLF,[],'all')];
+% clim = [min(dLF,[],'all'), max(dLF,[],'all')];
+clim = [prctile(dLF, 1,'all'), prctile(dLF, 99,'all')];
 
 fp = getFontParams();
 
@@ -36,7 +39,9 @@ fp = getFontParams();
 figure(1)
 plotDepthImg(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:), clim)
 hold on
-plot(pixel(1), pixel(2),'rx', LineWidth=1.2, MarkerSize=10)
+% plot(pixel(1), pixel(2),'rx', LineWidth=1.2, MarkerSize=10)
+plot(pixel(1)*[1,1], ylim, vcolor, LineWidth=1.2, MarkerSize=10)
+plot(xlim, pixel(2)*[1,1], hcolor, LineWidth=1.2, MarkerSize=10)
 axis on
 xlabel("k", fp{:})
 ylabel("l", fp{:})
@@ -51,7 +56,7 @@ figure(2)
 plotDepthImg(horizEPI, clim, 'useCbar', false, 'useAxisImage', false)
 hold on
 axis on
-plot(pixel(1)*[1,1], ylim,'r', LineWidth=2);
+plot(pixel(1)*[1,1], ylim,hcolor, LineWidth=2);
 xlabel("k", fp{:})
 ylabel("i", fp{:})
 
@@ -63,7 +68,7 @@ figure(3)
 plotDepthImg(vertEPI, clim, 'useCbar', false, 'useAxisImage', false)
 hold on
 axis on
-plot(xlim, pixel(2)*[1,1],'r', LineWidth=2);
+plot(xlim, pixel(2)*[1,1],vcolor, LineWidth=2);
 xlabel("j", fp{:})
 ylabel("l", fp{:})
 set(gcf,'Position', [300   300  0.3*figWidth figHeight])
@@ -75,7 +80,7 @@ set(gcf,'Position', [300   300  0.3*figWidth figHeight])
 
 figure(4)
 horizEPITrace = horizEPI(:, pixel(1));
-plot(horizEPITrace, 'rx', LineWidth=1.5)
+plot(horizEPITrace, strcat(hcolor,'x'), LineWidth=1.5)
 hold on
 P = singleDebug.P;
 sep = LFargs.seperation;
@@ -91,9 +96,13 @@ set(gca, ap{:})
 set(gcf, 'Position', [488.0000  587.8000  227.8000  174.2000]);
 
 
+txtOpts = ["horizontalAlignment","right", "units","normalized"];
+
+text(0.7,0.9,'Trace Data',txtOpts{:},fp{:},'color',hcolor)
+
 figure(5)
 vertEPITrace = vertEPI(pixel(2),:);
-plot(vertEPITrace, 'rx', LineWidth=1.5)
+plot(vertEPITrace, strcat(vcolor,'x'), LineWidth=1.5)
 hold on
 xlabel("j", fp{:})
 ylabel("Distance [m]", fp{:})
@@ -102,6 +111,11 @@ set(gca, ap{:})
 set(gcf, 'Position', [488.0000  587.8000  227.8000  174.2000]);
 jVals = 1:LFargs.N;
 plot(jVals, fn(LFargs.middleIdx, iVals),'b', 'LineWidth',2)
+
+
+text(0.95,0.9,'Trace Data',txtOpts{:},fp{:},'color',vcolor)
+text(0.95,0.75,'Fit',txtOpts{:},fp{:},'color','b')
+
 
 %% save the figures
 
