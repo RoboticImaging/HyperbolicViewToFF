@@ -8,6 +8,7 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
         nvargs.occlusionMethod = 'none'
         nvargs.contour = 'edge'
         nvargs.useOcclusionErrorThreshold = -0.1
+        nvargs.threshold = -0.05
     end
 
     % extract data
@@ -29,7 +30,7 @@ function [error, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFie
     if min(distError,[],'all') < nvargs.useOcclusionErrorThreshold
 %     if sum(distError < nvargs.useOcclusionErrorThreshold) > 1
         [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid, isMiddleValid,...
-                                'method', nvargs.occlusionMethod);
+                                'method', nvargs.occlusionMethod, 'threshold', nvargs.threshold);
     else
         [indexSubsetOcc] = rejectOcclusionOutliers (dataGrid - theoreticalGrid, isMiddleValid,...
                                 'method', 'none');

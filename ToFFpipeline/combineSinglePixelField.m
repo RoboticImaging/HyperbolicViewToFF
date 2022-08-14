@@ -9,9 +9,10 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
 
         nvargs.occlusionMethod = 'none'
         nvargs.contour = 'edge'
+        nvargs.threshold = -0.05
     end
     
-    distanceLFinterp = griddedInterpolant(distLF, 'linear', 'nearest');
+    distanceLFinterp = griddedInterpolant(distLF, 'linear', 'none');
 %     distanceLFinterp = griddedInterpolant(distLF,'nearest');
     
 
@@ -46,7 +47,8 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
     P = Pz2point(Pz, LFargs, pixel);
 
     % set return values
-    finalDist = norm(P);
+    PFromCentre = P - ([LFargs.middleIdx; LFargs.middleIdx; 0] - [1;1;0])*LFargs.seperation;
+    finalDist = norm(PFromCentre);
 
     singleDebug.finalErr = finalErr;
     [~, dataGrid, theoreticalGrid, indexSubset] = computeSinglePixelFieldSingleDepth(distanceLFinterp, LFargs, pixel, Pz, nvargsCell{:});
@@ -54,4 +56,5 @@ function [finalDist, singleDebug] = combineSinglePixelField (distLF, LFargs, pix
     singleDebug.theoreticalGrid = theoreticalGrid;
     singleDebug.indexSubset = indexSubset;
     singleDebug.P = P;
+    singleDebug.PFromCentre = PFromCentre;
 end
