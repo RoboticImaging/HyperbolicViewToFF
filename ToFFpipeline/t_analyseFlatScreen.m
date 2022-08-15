@@ -4,7 +4,9 @@ close all
 
 % pth = fullfile("..\data\results\mat\flat_screen_low_light\");
 % pth = fullfile("..\data\results\mat\flat_screen\");
-pth = fullfile("..\data\results\mat\paper_side_wall\");
+% pth = fullfile("..\data\results\mat\paper_side_wall\");
+% pth = fullfile("..\data\results\mat\paper_side_wall_2\");
+pth = fullfile("..\data\results\mat\side_wall_HQ");
 
 
 
@@ -21,8 +23,8 @@ singleImg = squeeze(dLF(LFargs.middleIdx, LFargs.middleIdx, :, :));
 
 %%
 % use the averaged image for the correct depth
-kVals = 76:196;
-lVals = 77:162;
+kVals = 95:214;
+lVals = 67:148;
 Pzavg = getPzimg(HQdistImg, LFargs);
 
 PzavgCrop = Pzavg(lVals,kVals);
