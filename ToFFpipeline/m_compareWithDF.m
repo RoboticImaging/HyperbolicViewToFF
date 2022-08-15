@@ -9,11 +9,12 @@ close all
 
 % pth = fullfile("..\data\results\mat\plastic_saturation_2\");
 % pth = fullfile("..\data\results\mat\occlusions\");
-% pth = fullfile("..\data\results\mat\gray_head\");
-pth = fullfile("..\data\results\mat\many_objects\");
+pth = fullfile("..\data\results\mat\gray_head\");
+% pth = fullfile("..\data\results\mat\many_objects\");
 
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
+HQimg = readHQimg(pth);
 
 tic
 [dImg, debug] = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", 'threshold');
@@ -22,11 +23,10 @@ toc
 
 clim = [min(dImg,[],'all'), max(dImg,[],'all')];
 
-figure
-imagesc(dImg, clim)
-title('Ours')
-colorbar
-
+% figure
+% imagesc(dImg, clim)
+% title('Ours')
+% colorbar
 
 
 % single img
@@ -48,32 +48,40 @@ imagesc(ImgOut, clim)
 
 
 %% zoomed imgs for head
-headLim = [0.77,0.97];
+headLim = [0.73,0.97];
 kLim = 100:143;
 lLim = 95:180;
 fp = getFontParams();
 ap = getATaxisParams();
 
 figure
-subplot(131)
+subplot(141)
 imagesc(singleDImg(lLim,kLim), headLim)
-title('Single')
+title('Single', fp{:})
 colorbar
 axis image
 axis off
 set(gca, ap{:})
 
-subplot(132)
+subplot(142)
+imagesc(HQimg(lLim,kLim), headLim)
+title('$N^2$', fp{:})
+colorbar
+axis image
+axis off
+set(gca, ap{:})
+
+subplot(143)
 imagesc(ImgOut(lLim,kLim), headLim)
-title('DF')
+title('DF', fp{:})
 colorbar
 axis image
 axis off
 set(gca, ap{:})
 
-subplot(133)
+subplot(144)
 imagesc(dImg(lLim,kLim), headLim)
-title('Ours')
+title('Ours', fp{:})
 h = colorbar;
 axis image
 axis off
@@ -84,7 +92,7 @@ ylabel(h, 'Distance [m]', fp{:})
 
 set(gcf,'Position',[488.0000  354.6000  730.2000  407.4000])
 
-
+%% saving
 savePath = '../figs/compareWithDF/';
 
 save2pdf(gcf, fullfile(savePath, 'compareWithDF.pdf'))

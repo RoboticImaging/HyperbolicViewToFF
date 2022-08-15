@@ -3,7 +3,9 @@ clc
 close all
 
 % pth = fullfile("..\data\results\mat\flat_screen_low_light\");
-pth = fullfile("..\data\results\mat\flat_screen\");
+% pth = fullfile("..\data\results\mat\flat_screen\");
+pth = fullfile("..\data\results\mat\paper_side_wall\");
+
 
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
@@ -17,35 +19,43 @@ pixel = [154;111];
 
 singleImg = squeeze(dLF(LFargs.middleIdx, LFargs.middleIdx, :, :));
 
-
+%%
 % use the averaged image for the correct depth
-kVals = 36:249;
-lVals = 36:197;
+kVals = 76:196;
+lVals = 77:162;
 Pzavg = getPzimg(HQdistImg, LFargs);
 
-Pz = mean(Pzavg(lVals,kVals),'all');
+PzavgCrop = Pzavg(lVals,kVals);
+
+Pz = mean(PzavgCrop(PzavgCrop > 0.7),'all');
 
 % clim = [1.17, 1.35];  
-clim = Pz + 0.03*[-1,1];   
 
-
+%%
 imgsToAnalyse = {singleImg, HQdistImg, ToFFimg, DFimg};
 names = ["single", "N^2", "ToFF", "DF"];
+
+clim = Pz + 0.06*[-1,1];   
 
 figure
 for i = 1:length(imgsToAnalyse)
     subplot(1,length(imgsToAnalyse), i);
-    imagesc(getPzimg(imgsToAnalyse{i}, LFargs), clim)
-    axis image
 
-    imCropped = imgsToAnalyse{i}(lVals,kVals);
-    rms(imCropped - Pz,'all')
+
+    Pzimg = getPzimg(imgsToAnalyse{i}, LFargs);
+
+    imCropped = Pzimg(lVals,kVals);
+    fprintf('%s has rms %.4f\n',names(i),rms(imCropped - Pz,'all'))
+
+    
+    imagesc(imCropped, clim)
+    axis image
 
     title(names(i));
 end
 
-figure
-imagesc(getPzimg(DFimg, LFargs) - getPzimg(HQdistImg, LFargs), 0.03*[-1,1])
+% figure
+% imagesc(getPzimg(DFimg, LFargs) - getPzimg(HQdistImg, LFargs), 0.03*[-1,1])
 
 
 

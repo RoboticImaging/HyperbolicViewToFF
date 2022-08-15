@@ -3,6 +3,7 @@ data
 *.asv
 *.mat
 *.csf
+*.png
 todo.txt
 
 figs
