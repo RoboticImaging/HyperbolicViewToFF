@@ -1,4 +1,4 @@
-function rmse = computeScreenAccuracy(dImg, kVals, lVals, truePz)
+function rmse = computeScreenAccuracy(dImg, LFargs, kVals, lVals, truePz)
     % compute the rmse of a flat screen from a depth image with given pixel
     % crop and true Pz value
 
@@ -6,5 +6,5 @@ function rmse = computeScreenAccuracy(dImg, kVals, lVals, truePz)
 
     imCropped = Pzimg(lVals,kVals);
 
-    rmse = rms(imCropped - truePz,'all');
+    rmse = rms(imCropped(rejectInvalidDataPts(imCropped)) - truePz,'all');
 end
