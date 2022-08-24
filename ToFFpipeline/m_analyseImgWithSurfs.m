@@ -7,11 +7,12 @@ close all
 
 %% generate the figures
 
-USE_PREDFINED_PIXELS = 0;
-USE_PIPELINE_IMAGE = 0; % change to false for quicker testing
+USE_PREDFINED_PIXELS = 1;
+USE_PIPELINE_IMAGE = 1; % change to false for quicker testing
 
 % pth = fullfile("..\data\results\mat\occlusions\");
-pth = fullfile("..\data\results\mat\\many_objects\");
+% pth = fullfile("..\data\results\mat\\many_objects\");
+pth = fullfile("..\data\results\mat\occlusions\");
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
@@ -73,8 +74,9 @@ for pointIdx = 1:size(samplePoints,1)
     figure(pointIdx+10)
     plotTheoreticalvsMeasured(singleDebug.theoreticalGrid, singleDebug.distGrid, singleDebug.indexSubset)
     title(sprintf("%d", pointIdx))
-end
 
+    set(gcf,'Position',[ 783.0000  551.4000  265.0000  210.6000])
+end
 
 %% after orienting as desired, save all the figures
 

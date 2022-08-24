@@ -3,7 +3,9 @@ data
 *.asv
 *.mat
 *.csf
+*.gif
 *.png
+*.jpg
 todo.txt
 
 figs

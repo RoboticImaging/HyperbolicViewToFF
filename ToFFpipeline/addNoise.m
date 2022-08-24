@@ -4,4 +4,6 @@ function [newLF] = addNoise(dLF, sigma)
         dLF (:,:,:,:)
         sigma double 
     end
+
+    newLF = dLF + sigma*randn(size(dLF));
 end

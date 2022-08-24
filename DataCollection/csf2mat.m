@@ -6,6 +6,7 @@ N = 15;
 % N = 3; 
 
 folderName = 'side_wall_HQ';
+% folderName = 'plastic_saturation_2';
 resultsLoc = "../data/results";
 % resultsLoc = "G:\ACFR Winter storage\NewResults\";
 dataFolder = fullfile(resultsLoc,"csf",folderName);
