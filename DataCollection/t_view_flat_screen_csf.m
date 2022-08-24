@@ -15,8 +15,6 @@ resultsLoc = "../data/results";
 % resultsLoc = "G:\ACFR Winter storage\NewResults\";
 dataFolder = fullfile(resultsLoc,"csf",folderName);
 
-
-
 tmp = load("cameraParams_july_2022.mat");
 cameraParams = tmp.cameraParams_july_2022;
 
