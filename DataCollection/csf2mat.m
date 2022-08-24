@@ -4,7 +4,7 @@ clc;
 
 N = 3; 
 
-folderName = 'testing_N_3';
+folderName = 'plastic_saturation_2';
 resultsLoc = "../data/results";
 % resultsLoc = "G:\ACFR Winter storage\NewResults\";
 dataFolder = fullfile(resultsLoc,"csf",folderName);

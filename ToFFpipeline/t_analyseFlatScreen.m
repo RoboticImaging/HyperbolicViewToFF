@@ -44,6 +44,7 @@ for i = 1:length(imgsToAnalyse)
     
     imagesc(imCropped, clim)
     axis image
+    colorbar
 
     title(methodNames(i));
 end

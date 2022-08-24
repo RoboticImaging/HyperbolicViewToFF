@@ -24,7 +24,7 @@ dset.dLF = dLF;
 dset.LFargs = LFargs;
 dset.HQimg = HQdistImg;
 
-sigmaVals = [0, 0.001, 0.01];
+sigmaVals = [0, 0.001, 0.01, 0.05, 0.1];
 
 Niter = 2;
 rmse = zeros(length(sigmaVals), 4, Niter);
@@ -41,7 +41,17 @@ for iterIdx = 1:Niter
     end 
 end
 
-
+%%
+figure
+stddevs = std(rmse, 0, 3);
+avgError = mean(rmse, 3);
+hold on
+ATerrorbar(sigmaVals',avgError(:,1),stddevs(:,1))
+ATerrorbar(sigmaVals',avgError(:,3),stddevs(:,3))
+ATerrorbar(sigmaVals',avgError(:,4),stddevs(:,4))
+xlabel("$\sigma$ [m]")
+ylabel("RMS error [m]")
+legend(["Single","DF","Ours"])
 
 
 
