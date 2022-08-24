@@ -7,9 +7,10 @@ addpath('../ToFFpipeline/')
 
 baseDir = "../data/results/mat";
 
-pathToMat = fullfile(baseDir, "testing_N_3");
+pathToMat = fullfile(baseDir, "plastic_boxes");
 
 [dLF, ampLF, LFargs] = readToFFarray(pathToMat);
 
 
-LFDispLawnmower(dLF)
+% LFDispLawnmower(dLF)
+LFDispMousePan(dLF)

@@ -7,7 +7,8 @@ close all;
 
 %% input array params
 % optical axis (note that z should always be 0):
-n = [0;1;0];
+% n = [0;1;0];
+n = [-1;0;0];
 % opticalAxisDeviation = -10;
 % n = [sind(opticalAxisDeviation);cosd(opticalAxisDeviation);0];
 n = n./norm(n);
@@ -15,18 +16,20 @@ n = n./norm(n);
 baseline = 300/1000; % mm
 assert(baseline>0);
 
-N = 15; assert(N>1);
 % N = 3; assert(N>1);
-% N = 5; assert(N>1);
+N = 15; assert(N>1);
 
 seperation = baseline/(N-1);
 
 % bottomLeftCorner position
-bottomLeftCorner = [300 -15  250]./1000;
+% bottomLeftCorner = [300 -15  250]./1000; % standard
+bottomLeftCorner = [75 350 250]./1000; % facing side wall
+% bottomLeftCorner = [300 125  250]./1000; % closer forward
+% bottomLeftCorner = [300 -100  250]./1000; % further back
 % bottomLeftCorner = [450 -40 250]./1000;
 
 stepTime = 0.8;
-% stepTime = 4;
+% stepTime = 3;
 
 % default position of camera at UR5 theta = 0; this needs to be rotated to
 % n
@@ -69,10 +72,10 @@ robotSocket = openArmConnection(HOST, PORT_30003);
 % debug mode:
 % robotSocket = 1;
 
-initCommand = sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=0.05, v=0.05, t=0, r=0)\n',...
+initCommand = sprintf('movej(p[%.2f,%.2f,%.2f,%.2f,%.2f,%.2f],a=1, v=1, t=20, r=0)\n',...
     bottomLeftCorner(1),bottomLeftCorner(2),bottomLeftCorner(3),orientationVec(1),orientationVec(2),orientationVec(3));
 fprintf(sprintf('Sending Command: %s', initCommand));
-fprintf(robotSocket,initCommand);
+fprintf(robotSocket, initCommand);
 
 
 % check center position and orientation is what you expect
@@ -81,18 +84,23 @@ pause() % make sure everything is in right position
 
 %% prepare results location
 
-saveTarget = "../data/results/csf/refraction_and_reflection";
+saveTarget = "../data/results/csf/side_wall_HQ";
 
-sceneDescription = "challenging scene with refraction and reflection";
+sceneDescription = "side wall with more frames taken";
 
 
+% numFrames = 10; % The number of frames to capture 
 numFrames = 2; % The number of frames to capture 
 dropFrames = 5; % The number of frames to drop before capturing 
-
+gain = 1.8;
+% intTime = 800;
+intTime = 1774;
 
 configFile = "kea_3step_50MHz.bin";
 LFargs.configFile = configFile;
 LFargs.f = 50e6; 
+LFargs.gain = gain;
+LFargs.intTime = intTime;
 
 % check to make sure we aren't overrriding anything important:
 if exist(saveTarget, 'dir')
@@ -113,7 +121,8 @@ serial = '201000b';
 fprintf("creating camera...");
 cam = tof.KeaCamera(tof.ProcessingConfig(), serial);
 config = tof.CameraConfig(configFile);
-config.setGain(1.8)
+config.setGain(gain)
+config.setIntegrationTime(1, intTime)
 cam.setCameraConfig(config);
 
 
@@ -147,6 +156,7 @@ fprintf(fid, 'N = %d\n',N);
 fprintf(fid, '\n**** Camera Params ****\n');
 fprintf(fid, 'numFrames = %d\n',numFrames);
 fprintf(fid, 'dropFrames = %d\n',dropFrames);
+fprintf(fid, 'gain = %f\n',gain);
 % fprintf(fid, 'DACvalue = %d\n',DACvalue);
 % if config.median.enabled == true
 %     fprintf(fid, 'median filter  = %d\n',config.median.size);

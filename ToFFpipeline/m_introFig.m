@@ -7,7 +7,7 @@ clc
 close all
 
 
-pth = fullfile("..\data\results\mat\many_objects\");
+pth = fullfile("..\data\results\mat\fruit\");
 
 [dLF, ampLF, LFargs] = readToFFarray(pth); 
 
@@ -22,7 +22,8 @@ ourImg = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", "threshold");
 
 imgsToPlot = {singleImg, DFImg, ourImg};
 titles = ["Single ToF", "Depth Fields (previous)", "ToFF (Ours)"];
-clim = [min(ourImg,[],"all"), max(ourImg,[],"all")];
+% clim = [min(ourImg,[],"all"), max(ourImg,[],"all")];
+clim = [prctile(ourImg, 1,'all'), prctile(ourImg, 99,'all')];
 
 boxes(1).kVals = 140:200;
 boxes(1).lVals = 50:70;
