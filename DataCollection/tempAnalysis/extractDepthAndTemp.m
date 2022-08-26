@@ -8,7 +8,7 @@ function [dImgStack, tmps] = extractDepthAndTemp(file, LFargs)
 
     while csfRead.frameIndex ~= csfRead.numberOfFrames()
         frames = csfRead.readFrame();
-        if frames.frameType() == tof.frameType.AMPLITUDE
+        if frames.frameType() == tof.FrameType.PHASE
             dImgStack(:,:,j) = phase2Dist(flip(frames.data',2), LFargs.f);
             tmps(j,:) = frames.temperatures;
             j = j + 1;

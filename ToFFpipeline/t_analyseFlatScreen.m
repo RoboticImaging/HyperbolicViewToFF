@@ -5,7 +5,8 @@ close all
 % pth = fullfile("..\data\results\mat\flat_screen_low_light\");
 % pth = fullfile("..\data\results\mat\flat_screen\");
 % pth = fullfile("..\data\results\mat\paper_side_wall\");
-pth = fullfile("..\data\results\mat\paper_side_wall_2\");
+% pth = fullfile("..\data\results\mat\paper_side_wall_2\");
+pth = fullfile("..\data\results\mat\side_wall_HQ_tempsafe\");
 % pth = fullfile("..\data\results\mat\paper_side_wall_2_low_light\");
 % pth = fullfile("..\data\results\mat\side_wall_HQ");
 
@@ -15,8 +16,13 @@ pth = fullfile("..\data\results\mat\paper_side_wall_2\");
 
 %%
 % use the averaged image for the correct depth
-kVals = 95:214;
-lVals = 67:148;
+% old paper (i.e. side_wall_HQ, paper_side wall)
+% kVals = 95:214;
+% lVals = 67:148;
+
+% new paper (tempsafe ones)
+kVals = 111:229;
+lVals = 69:148;
 Pzavg = getPzimg(imgsToAnalyse{2}, LFargs);
 
 PzavgCrop = Pzavg(lVals,kVals);
@@ -28,7 +34,7 @@ Pz = mean(PzavgCrop(PzavgCrop > 0.7),'all');
 %%
 
 
-clim = Pz + 0.06*[-1,1];   
+clim = Pz + 0.02*[-1,1];   
 
 figure
 for i = 1:length(imgsToAnalyse)
