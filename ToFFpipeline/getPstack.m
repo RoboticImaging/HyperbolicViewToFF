@@ -5,6 +5,8 @@ function [Pstack] = getPstack(dImg, LFargs, nvargs)
 
         nvargs.lVals = []
         nvargs.kVals = []
+
+        nvargs.filterValid = false
     end
 
 
@@ -23,6 +25,10 @@ function [Pstack] = getPstack(dImg, LFargs, nvargs)
         for k = nvargs.kVals
             pixel = [k; l];
             r = dImg(pixel(2), pixel(1));
+            if nvargs.filterValid && (rejectInvalidDataPts (r) == false)
+                continue
+            end
+
             P = radialDist2point(r, LFargs, pixel);
 
             Pstack(:, j) = P(:);

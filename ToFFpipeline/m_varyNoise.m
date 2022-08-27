@@ -6,19 +6,25 @@ clc
 close all
 
 
-accDset = fullfile("..\data\results\mat\side_wall_HQ");
+% accDset = fullfile("..\data\results\mat\side_wall_HQ");
+accDset = fullfile("..\data\results\mat\side_wall_ACTUAL_HQ_tempsafe\");
 [dLF, ampLF, LFargs] = readToFFarray(accDset); 
 [HQdistImg, ~] = readHQimg(accDset);
 
 % [imgsToAnalyse, methodNames, LFargs, dLF] = getAllMethodImgs(accDset);
 
-kVals = 95:214;
-lVals = 67:148;
-truePz = 1.0494; % m
+% old paper (i.e. side_wall_HQ, paper_side wall)
+% kVals = 95:214;
+% lVals = 67:148;
 
-% Pzavg = getPzimg(imgsToAnalyse{2}, LFargs);
-% PzavgCrop = Pzavg(lVals,kVals);
-% truePz = mean(PzavgCrop(PzavgCrop > 0.7),'all');
+% new paper (tempsafe ones)
+kVals = 111:229;
+lVals = 69:148;
+
+
+[Pstack] = getPstack(HQdistImg, LFargs, kVals=kVals, lVals=lVals);
+Pstack = Pstack(:,Pstack(3,:) > 0.08);
+plane = getPlaneFit(Pstack);
 
 dset.dLF = dLF;
 dset.LFargs = LFargs;
@@ -33,9 +39,9 @@ for iterIdx = 1:Niter
     for sigIndx = 1:length(sigmaVals)
         dset.dLF = addNoise(dLF, sigmaVals(sigIndx));
 
-        [imgsToAnalyse, methodNames] = getAllMethodImgs(dset);
+        [imgsToAnalyse, methodNames] = getAllMethodImgs(dset,ToFF_threshold=-0.3);
         for imgIdx = 1:length(imgsToAnalyse)
-            rmse(sigIndx, imgIdx, iterIdx) = computeScreenAccuracy(imgsToAnalyse{imgIdx}, LFargs, kVals, lVals, truePz);
+            rmse(sigIndx, imgIdx, iterIdx) = computeScreenAccuracy(imgsToAnalyse{imgIdx}, LFargs, kVals, lVals, plane);
 
         end
     end 

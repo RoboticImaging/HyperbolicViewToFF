@@ -1,8 +1,8 @@
-function [imgsToAnalyse, methodNames, LFargs, dLF] = getAllMethodImgs(dset, nvargs)
+function [imgsToAnalyse, methodNames, LFargs, dLF, imEnum] = getAllMethodImgs(dset, nvargs)
     arguments
         dset % string to path or dLF itself
 
-        nvargs.ToFF_threshold double = -0.3
+        nvargs.ToFF_threshold double = -0.2
         nvargs.DF_pixel = [154;111]
     end
 
@@ -26,6 +26,10 @@ function [imgsToAnalyse, methodNames, LFargs, dLF] = getAllMethodImgs(dset, nvar
 
 
 %     ToFFimg = singleImg;
+    imEnum.single = 1;
+    imEnum.HQ = 2;
+    imEnum.DF = 3;
+    imEnum.ToFF = 4;
     imgsToAnalyse = {singleImg, HQdistImg, DFimg, ToFFimg};
     methodNames = ["Single", "$N^2$", "DF","ToFF"];
 end
