@@ -17,14 +17,14 @@ singleImg = squeeze(dLF(LFargs.middleIdx,LFargs.middleIdx,:,:));
 pixel = [137;132];
 DFImg = DepthFieldImage (dLF,LFargs, pixel);
 
-ourImg = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", "threshold");
-% ourImg = singleImg; % for quick figure testing
+% ourImg = ToFFImage(dLF, ampLF, LFargs, "occlusionMethod", "threshold");
+ourImg = singleImg; % for quick figure testing
 %%
 
 imgsToPlot = {singleImg, DFImg, ourImg};
-titles = ["Single ToF", "Depth Fields (previous)", "ToFF (Ours)"];
-% clim = [min(ourImg,[],"all"), max(ourImg,[],"all")];
-clim = [prctile(ourImg, 1,'all'), prctile(ourImg, 99,'all')];
+titles = ["Single ToF", "Depth Fields (previous)", "Hyperbolic AiF (ours)"];
+clim = [min(ourImg,[],"all"), max(ourImg,[],"all")];
+% clim = [prctile(ourImg, 1,'all'), prctile(ourImg, 99,'all')];
 
 boxes(1).kVals = 76:109;
 boxes(1).lVals = 136:166;
@@ -97,7 +97,7 @@ end
 ylabel(c1, 'Distance [m]', fp{:}, 'color','k')
 
 
-
+return
 %% saving
 
 savePath = '../figs/intro_fig/';

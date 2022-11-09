@@ -65,7 +65,7 @@ set(gca, ap{:})
 
 subplot(142)
 imagesc(HQimg(lLim,kLim), headLim)
-title('$N^2$', fp{:})
+title('Stat. Burst', fp{:})
 colorbar
 axis image
 axis off

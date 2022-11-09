@@ -8,7 +8,7 @@ close all
 %% generate the figures
 
 USE_PREDFINED_PIXELS = 1;
-USE_PIPELINE_IMAGE = 1; % change to false for quicker testing
+USE_PIPELINE_IMAGE = 0; % change to false for quicker testing
 
 % pth = fullfile("..\data\results\mat\occlusions\");
 % pth = fullfile("..\data\results\mat\\many_objects\");
@@ -75,7 +75,8 @@ for pointIdx = 1:size(samplePoints,1)
     plotTheoreticalvsMeasured(singleDebug.theoreticalGrid, singleDebug.distGrid, singleDebug.indexSubset)
     title(sprintf("%d", pointIdx))
 
-    set(gcf,'Position',[ 783.0000  551.4000  265.0000  210.6000])
+%     set(gcf,'Position',[ 783.0000  551.4000  265.0000  210.6000])
+    set(gcf,'Position',[783.0000  571.0000  240.4000  191.0000])
 end
 
 %% after orienting as desired, save all the figures
@@ -84,9 +85,10 @@ savePath = '../figs/analyseImgWithSurfs/';
 
 % first save single img
 figure(2)
-save2pdf(gcf, fullfile(savePath, 'centreImg.pdf'))
+% save2pdf(gcf, fullfile(savePath, 'centreImg.pdf'))
 
 for pointIdx = 1:size(samplePoints,1)
     figure(pointIdx+10)
-    save2pdf(gcf, fullfile(savePath, sprintf('view_%d.pdf', pointIdx)))
+%     save2pdf(gcf, fullfile(savePath, sprintf('view_%d.pdf', pointIdx)))
+    saveas(gcf,fullfile(savePath,sprintf('view_%d.png', pointIdx)))
 end

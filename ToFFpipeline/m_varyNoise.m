@@ -31,17 +31,19 @@ dset.LFargs = LFargs;
 dset.HQimg = HQdistImg;
 
 sigmaVals = [0, 0.001, 0.01, 0.05, 0.1];
+% sigmaVals = [0, 0.001];
 
-Niter = 2;
+Niter = 5;
 rmse = zeros(length(sigmaVals), 4, Niter);
 
 for iterIdx = 1:Niter
     for sigIndx = 1:length(sigmaVals)
         dset.dLF = addNoise(dLF, sigmaVals(sigIndx));
 
-        [imgsToAnalyse, methodNames] = getAllMethodImgs(dset,ToFF_threshold=-0.3);
+        [imgsToAnalyse, methodNames] = getAllMethodImgs(dset, ToFF_threshold=-0.3);
         for imgIdx = 1:length(imgsToAnalyse)
-            rmse(sigIndx, imgIdx, iterIdx) = computeScreenAccuracy(imgsToAnalyse{imgIdx}, LFargs, kVals, lVals, plane);
+            rmse(sigIndx, imgIdx, iterIdx) = computeScreenAccuracy(imgsToAnalyse{imgIdx}, ...
+                                                                   LFargs, kVals, lVals, plane);
 
         end
     end 
@@ -52,15 +54,20 @@ figure
 stddevs = std(rmse, 0, 3);
 avgError = mean(rmse, 3);
 hold on
-ATerrorbar(sigmaVals',avgError(:,1),stddevs(:,1))
-ATerrorbar(sigmaVals',avgError(:,3),stddevs(:,3))
-ATerrorbar(sigmaVals',avgError(:,4),stddevs(:,4))
+for i = [1,3,4]
+    ATerrorbar(sigmaVals', 100*avgError(:,i), stddevs(:,i))
+end
 xlabel("$\sigma$ [m]")
-ylabel("RMS error [m]")
+ylabel("RMS error [\%]")
 legend(["Single","DF","Ours"])
+box on
+grid on
+tmp = ylim;
+ylim([tmp(1),10])
+set(gca,'YScale','log')
 
-
-
+%%
+save('varyNoise.mat', 'Niter','sigmaVals', 'rmse')
 
 
 

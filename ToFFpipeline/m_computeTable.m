@@ -39,10 +39,10 @@ fprintf("\\\\\n");
 
 
 %%
-clim = 0.03*[-1,1];
+clim = 0.015*[-1,1];
 figure
 for imgIdx = 1:length(imgsToAnalyse)
-    subaxis(2,2, imgIdx, 'sh',0.01, 'sv',0.01, 'marginright',0.15)
+    subaxis(2,2, imgIdx, 'sh',0.01, 'sv',0.01, 'marginright',0.2)
 
     [Pstack] = getPstack(imgsToAnalyse{imgIdx}, LFargs, kVals=kVals, lVals=lVals);
     errors = plane.n'*(Pstack(:,:)- plane.centroid);
@@ -54,27 +54,30 @@ for imgIdx = 1:length(imgsToAnalyse)
     axis image
     axis off
 
+    rmse = computeScreenAccuracy(imgsToAnalyse{imgIdx}, LFargs, kVals, lVals, plane);
+    imgTitle = sprintf("%s (%.2f cm)", methodNames(imgIdx), 1e2*rmse);
     if imgIdx > 2
-        text(0.5, -0.1, methodNames(imgIdx), 'Units', 'normalized', HorizontalAlignment='center', ...
+        text(0.5, -0.1, imgTitle, 'Units', 'normalized', HorizontalAlignment='center', ...
             FontSize=14);
     else
-        text(0.5, 1.1, methodNames(imgIdx), 'Units', 'normalized', HorizontalAlignment='center', ...
+        text(0.5, 1.1, imgTitle, 'Units', 'normalized', HorizontalAlignment='center', ...
             FontSize=14);
     end
 end
-set(gcf,'Position',[488.0000  403.8000  561.8000  358.2000]);
+set(gcf,'Position',[488.0000  398.2000  608.2000  363.8000]);
 
 fp = getFontParams();
 ap = getATaxisParams();
 
 h = axes(gcf,'visible','off');
 
-c1 = colorbar(h,'Position',[0.88 0.2 0.03 0.6]);  % attach colorbar to h
+c1 = colorbar(h,'Position',[0.82 0.2 0.03 0.6]);  % attach colorbar to h
 
 caxis(h, clim*100);  
-ylabel(c1, 'Distance Error [cm]', fp{:}, 'color','k')
+ylabel(c1, 'Distance Error [cm]', 'color','k', 'Interpreter','latex')
   
 set(c1, ap{:})
+set(c1, 'FontSize', 16)
 
 
 
@@ -87,6 +90,7 @@ return
 
 [imgsToAnalyse, methodNames, LFargs] = getAllMethodImgs(completnessDset);
 
+%%
 fprintf("Invalid Pts ");
 for imgIdx = 1:length(imgsToAnalyse)
     fracComplete = computeCompletness(imgsToAnalyse{imgIdx});

@@ -1,4 +1,4 @@
-% check if the camera has temperature calibration set by default
+% Heat up the camera by taking many frames and dropping them
 
 clear
 clc
@@ -36,7 +36,7 @@ while (1)
     if mod(nFrames,1000) == 0
         temps = frames(1).temperatures;
         fprintf("Frame %d. Temperatures are [", nFrames)
-        fprintf("%.2f, ",frames(2).temperatures())
+        fprintf("%.2f, ",frames(1).temperatures())
         fprintf("\b\b]\n")
     end
     nFrames = nFrames + 1;

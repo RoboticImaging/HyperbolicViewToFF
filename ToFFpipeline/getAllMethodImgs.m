@@ -31,5 +31,5 @@ function [imgsToAnalyse, methodNames, LFargs, dLF, imEnum] = getAllMethodImgs(ds
     imEnum.DF = 3;
     imEnum.ToFF = 4;
     imgsToAnalyse = {singleImg, HQdistImg, DFimg, ToFFimg};
-    methodNames = ["Single", "$N^2$", "DF","ToFF"];
+    methodNames = ["Single", "Stat. Burst", "DF","ToFF"];
 end
